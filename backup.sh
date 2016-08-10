@@ -1,0 +1,182 @@
+#!/bin/bash
+#
+#    This file is part of `Radio RaBe Backup process and automation scripts`
+#    Copyright (C) 2016 Radio Bern RaBe
+#    https://github.com/radiorabe/backup
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Constants --------------------------------------------------------------------
+#
+TMPDIR=/tmp					# here to put temporary files
+DEBUG=0						# debug level 0-3
+VERBOSE=3					# verbosity level
+BIN_RSYNC=`which rsync`
+
+logging()
+#
+# Description:  It writes messages to logfile or standard output.
+#
+# Parameter  :  $1 - the level of message
+#               $2 - the message
+#
+# Std. Output:  Logging messages.
+#
+{
+ if [ $DEBUG -ge 3 ]; then set -x
+ fi
+
+ logtime="$(date +%H):$(date +%M):$(date +%S)"
+ prefix=""
+ stderr=-1
+
+ case $1 in
+   -e)     prefix="Error:   " stderr=1 verbose=0;; #show always
+   -s)     prefix="Success: " stderr=0 verbose=0;; #show always
+   -r)     prefix="Stream:  " stderr=0 verbose=0;; #show always
+   -i)     prefix="Info:    " stderr=0 verbose=1;; #show in VERBOSE>=1 mode
+   -a)     prefix="         " stderr=0 verbose=1;; #show in VERBOSE>=1 mode
+   -n)     prefix="Notice:  " stderr=0 verbose=2;; #show in VERBOSE>1 mode
+   -w)     prefix="Warning: " stderr=1 verbose=2;; #show in VERBOSE>1 mode
+   -d)     prefix="Debug:   " stderr=1 verbose=3;; #show only in DEBUG mode
+ esac
+ shift
+
+# if VERBOSE mode is set, then show all messages, which we want to show in verbose mode
+if [ $VERBOSE -ge 1 ] && [ $verbose -lt 2 ] ; then 
+ if [ "$stderr" -eq 1 ]; then
+   echo "$logtime $prefix" $1 >&2
+ else
+   echo "$logtime $prefix" $1
+ fi
+elif [ $VERBOSE -gt 1 ] && [ $verbose -lt 3 ] ; then 
+ if [ "$stderr" -eq 1 ]; then
+   echo "$logtime $prefix" $1 >&2
+ else
+   echo "$logtime $prefix" $1
+ fi
+# else show only messages which are defined to show in non-verbose mode
+elif [ $verbose -eq 0 ] ; then
+ if [ "$stderr" -eq 1 ]; then
+   echo "$logtime $prefix" $1 >&2
+ else
+   echo "$logtime $prefix" $1
+ fi
+fi
+# show debug messages
+if [ $DEBUG -ge 1 ] && [ $verbose -eq 3 ] ; then
+   echo "$logtime $prefix" $1 >&2
+fi
+}
+
+checkRequirements()
+#
+# Description:  Check if all necessary tools and binaries are available
+# 
+# Parameter  :  none
+#
+# Output     :  logging
+#               forces an error if a needed binary is not available
+#
+{
+if [ $DEBUG -ge 3 ]; then set -x
+fi
+
+logging -d "Checking backup script requirements"
+if [ -z $BIN_RSYNC ]; then RequirementsMsg=rsync
+fi
+
+if [ ! -z $RequirementsMsg ];
+then
+  logging -e "Program $RequirementsMsg not installed or not in PATH"
+  return 1
+fi
+
+return 0
+}
+
+shutdown_backup()
+#
+# Description:  shutting down backup and cleaning up
+# 
+# Parameter  :  none
+#
+# Output     :  logging
+#
+{
+if [ $DEBUG -ge 3 ]; then set -x
+fi
+
+logging -n "Shutting down backup..."
+ExitCode=$1
+
+case $ExitCode in
+	0)
+	  logging -s "backup exiting..."
+	;;
+	1)
+	  logging -w "backup stopped partionally unsuccuessfull"
+	;;
+esac
+logging -d "Returnvalue=$ExitCode"
+
+exit $ExitCode
+}
+
+run_backup()
+#
+# Description:  run real backup
+# 
+# Parameter  :  none
+#
+# Output     :  exit code
+#
+{
+
+logging -i "run_backup"
+
+shutdown_backup 2
+
+sourcePath="hostname:/src/path/volume/"
+destinationPath="/dst/path/volume"
+
+$BIN_RSYNC	--verbose \
+		--archive \
+		--recursive \
+		--acls \
+		--devices \
+		--specials \
+		--rsh=/usr/bin/ssh \
+		--delete \
+		--exclude="profiles/*" \
+		--numeric-ids \
+		--timeout=120 \
+		--delete-excluded \
+		--stats \
+		--human-readable \
+		-n
+		#--progress \
+		#--bwlimit=8000 \
+		--inplace \
+               ${sourcePath} ${destinationPath}
+
+return $?
+}
+
+# CheckRequirements before do anything
+if ! checkRequirements; then shutdown_backup 1
+fi
+
+logging -i "Starting backup at `hostname --fqdn`"
+run_backup
