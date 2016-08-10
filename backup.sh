@@ -22,6 +22,7 @@
 TMPDIR=/tmp					# here to put temporary files
 DEBUG=0						# debug level 0-3
 VERBOSE=3					# verbosity level
+BIN_SSH=`which ssh`
 BIN_RSYNC=`which rsync`
 
 logging()
@@ -94,7 +95,10 @@ if [ $DEBUG -ge 3 ]; then set -x
 fi
 
 logging -d "Checking backup script requirements"
+
 if [ -z $BIN_RSYNC ]; then RequirementsMsg=rsync
+fi
+if [ -z $BIN_SSH ]; then RequirementsMsg=ssh
 fi
 
 if [ ! -z $RequirementsMsg ];
@@ -134,9 +138,9 @@ logging -d "Returnvalue=$ExitCode"
 exit $ExitCode
 }
 
-run_backup()
+sync_one_filesystem()
 #
-# Description:  run real backup
+# Description:  backp/sync /boot partition
 # 
 # Parameter  :  none
 #
@@ -144,12 +148,41 @@ run_backup()
 #
 {
 
-logging -i "run_backup"
+local sourcePath="$1"
+local destinationHost="$2"
+local destinationPath="$3"
+local destinationRsync="${2}:${3}"
 
-shutdown_backup 2
+logging -n "sync_one_filesystem(): Validate config"
 
-sourcePath="hostname:/src/path/volume/"
-destinationPath="/dst/path/volume"
+# Validate source path variable
+if [ ! -d $sourcePath ]; then
+  logging -e "sourcePath $sourcePath is not valid"
+  return 1
+fi
+
+# Validate destination path variable
+if [ -z $destinationPath ]; then
+  logging -e "destinationPath is empty"
+  return 1
+fi
+
+# Validate destination host variable
+if [ -z $destinationHost ]; then
+  logging -e "destinationHost is empty"
+  return 1
+fi
+
+logging -n "sync_one_filesystem(): Syncing from $sourcePath to $destinationRsync"
+
+# Validate destination path
+if ! $BIN_SSH $destinationHost ls -1 $destinationPath; then
+  logging -e "Backup destination $destinationPath on host $destinationHost does not exist!"
+  logging -a "Check rsync error messages!"
+  return 1
+fi
+
+logging -i "Syncing $HOSTNAME:$sourcePath to $destinationPath"
 
 $BIN_RSYNC	--verbose \
 		--archive \
@@ -157,7 +190,7 @@ $BIN_RSYNC	--verbose \
 		--acls \
 		--devices \
 		--specials \
-		--rsh=/usr/bin/ssh \
+		--rsh=$BIN_SSH \
 		--delete \
 		--exclude="profiles/*" \
 		--numeric-ids \
@@ -179,4 +212,4 @@ if ! checkRequirements; then shutdown_backup 1
 fi
 
 logging -i "Starting backup at `hostname --fqdn`"
-run_backup
+sync_one_filesystem /tmp localhost /tmp
