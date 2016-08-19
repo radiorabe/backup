@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with radiorabe backup.  If not, see <http://www.gnu.org/licenses/>.
 
-PN		= backup.sh
+PN		= rabe-fs-backup.sh
 
 #PREFIX		?= /usr/local
 PREFIX		?= .
