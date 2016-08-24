@@ -29,6 +29,7 @@ STD_RSYNC_OPTIONS="--verbose --archive --recursive --acls --devices \
 --stats --human-readable --inplace -n"
 STD_BACKUP_DIRS="/etc /home /root /srv /usr/local /var/log /var/local /var/spool /var/backup"
 BIN_SSH=`which ssh`				# find path to ssh
+STD_SSH_OPTIONS="PasswordAuthentication=no"	# only with publickey
 BIN_RSYNC=`which rsync`				# find path to ssh
 
 logging()
@@ -173,6 +174,32 @@ fi
 
 }
 
+check_backupserver()
+#
+# Description:  Check if backup server is reachable
+#
+# Parameter  :  none
+#
+# Output     :  exit code
+#
+{
+
+# Validate destination path variable
+if [ -z $BACKUP_SERVER ]; then
+  logging -e "Oops! Backup server is not set."
+  return 1
+fi
+
+if $BIN_SSH -O ${STD_SSH_OPTIONS} root@${BACKUP_SERVER} ls -1 &>/dev/null;
+then
+  logging -n "Backup server $BACKUP_SERVER found and reachable"
+  return 0
+else
+  return 1
+fi
+
+}
+
 backup_filesystems()
 #
 # Description:  Backing up std filesystems
@@ -186,12 +213,10 @@ backup_filesystems()
 local dirs_to_backup="$1"
 logging -n "backup_filesystems(): Dirs to backup $dirs_to_backup"
 
-# Validate destination path variable
-if [ -z $BACKUP_SERVER ]; then
-  logging -e "Oops! Backup server is not set."
+if ! check_backupserver;
+then
+  logging -e "Oops! Problem with backup server"
   return 1
-else
-  logging -n "Backup server $BACKUP_SERVER found"
 fi
 
 
