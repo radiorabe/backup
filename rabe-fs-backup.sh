@@ -24,6 +24,7 @@ DEBUG=0						# debug level 0-3
 VERBOSE=3					# verbosity level
 CONFIG_DIR=/etc/`basename "$0" .sh`		# config directory
 BACKUP_SERVER=""				# loaded by config file
+STD_BACKUP_DIRS="/etc /home /root /srv /usr/local /var/log /var/local /var/spool /var/backup"
 BIN_SSH=`which ssh`				# find path to ssh
 BIN_RSYNC=`which rsync`				# find path to ssh
 
