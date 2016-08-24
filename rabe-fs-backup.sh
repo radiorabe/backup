@@ -22,8 +22,8 @@
 TMPDIR=/tmp					# here to put temporary files
 DEBUG=0						# debug level 0-3
 VERBOSE=3					# verbosity level
-BIN_SSH=`which ssh`
-BIN_RSYNC=`which rsync`
+BIN_SSH=`which ssh`				# find path to ssh
+BIN_RSYNC=`which rsync`				# find path to ssh
 
 logging()
 #
