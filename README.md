@@ -27,6 +27,12 @@ Radio RaBe Backup process and automation scripts.
 * Um Überlast auf dem Backup Server zu vermeiden, wird der Backup mit einer zufälligen
   anzahl Sekunden verzögert ausgeführt. 
 
+## Setup
+
+	mkdir /etc/rabe-fs-backup
+	touch /etc/rabe-fs-backup/rabe-fs-backup.conf
+	echo "BACKUP_SERVER=backup.domain.tld" >/etc/rabe-fs-backup/rabe-fs-backup.conf
+
 ## License
 
 Radio RaBe Backup process and automation scripts is released under the terms of the
