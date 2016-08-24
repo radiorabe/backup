@@ -144,6 +144,30 @@ logging -d "Returnvalue=$ExitCode"
 exit $ExitCode
 }
 
+load_config()
+#
+# Description:  load config files
+#
+# Parameter  :  none
+#
+# Output     :  none
+#
+{
+if [ $DEBUG -ge 3 ]; then set -x
+fi
+
+local config_file=${CONFIG_DIR}/`basename $0 .sh`.conf
+
+if [ ! -r ${config_file} ];
+then
+  echo Config file ${config_file} not found
+  shutdown_backup
+fi
+
+. ${config_file}
+
+}
+
 sync_one_filesystem()
 #
 # Description:  backp/sync /boot partition
@@ -216,6 +240,8 @@ return $?
 # CheckRequirements before do anything
 if ! checkRequirements; then shutdown_backup 1
 fi
+
+load_config
 
 logging -i "Starting backup at `hostname --fqdn`"
 #sync_one_filesystem /tmp localhost /tmp
