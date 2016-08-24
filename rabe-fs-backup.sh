@@ -24,6 +24,9 @@ DEBUG=0						# debug level 0-3
 VERBOSE=3					# verbosity level
 CONFIG_DIR=/etc/`basename "$0" .sh`		# config directory
 BACKUP_SERVER=""				# loaded by config file
+STD_RSYNC_OPTIONS="--verbose --archive --recursive --acls --devices \
+--specials --delete --numeric-ids --timeout=120 --delete-excluded \
+--stats --human-readable --inplace -n"
 STD_BACKUP_DIRS="/etc /home /root /srv /usr/local /var/log /var/local /var/spool /var/backup"
 BIN_SSH=`which ssh`				# find path to ssh
 BIN_RSYNC=`which rsync`				# find path to ssh
@@ -170,10 +173,34 @@ fi
 
 }
 
+backup_filesystems()
+#
+# Description:  Backing up std filesystems
+#
+# Parameter  :  none
+#
+# Output     :  exit code
+#
+{
+
+local dirs_to_backup="$1"
+logging -n "backup_filesystems(): Dirs to backup $dirs_to_backup"
+
+# Validate destination path variable
+if [ -z $BACKUP_SERVER ]; then
+  logging -e "Oops! Backup server is not set."
+  return 1
+else
+  logging -n "Backup server $BACKUP_SERVER found"
+fi
+
+
+}
+
 sync_one_filesystem()
 #
 # Description:  backp/sync /boot partition
-# 
+#
 # Parameter  :  none
 #
 # Output     :  exit code
@@ -246,4 +273,4 @@ fi
 load_config
 
 logging -i "Starting backup at `hostname --fqdn`"
-#sync_one_filesystem /tmp localhost /tmp
+backup_filesystems "$STD_BACKUP_DIRS"
