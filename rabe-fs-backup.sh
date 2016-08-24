@@ -22,6 +22,7 @@
 TMPDIR=/tmp					# here to put temporary files
 DEBUG=0						# debug level 0-3
 VERBOSE=3					# verbosity level
+CONFIG_DIR=/etc/`basename "$0" .sh`		# config directory
 BIN_SSH=`which ssh`				# find path to ssh
 BIN_RSYNC=`which rsync`				# find path to ssh
 
@@ -104,6 +105,11 @@ fi
 if [ ! -z $RequirementsMsg ];
 then
   logging -e "Program $RequirementsMsg not installed or not in PATH"
+  return 1
+fi
+
+if [ ! -d $CONFIG_DIR ]; then
+  logging -e "Config dir $CONFIG_DIR does not exist."
   return 1
 fi
 
@@ -212,4 +218,4 @@ if ! checkRequirements; then shutdown_backup 1
 fi
 
 logging -i "Starting backup at `hostname --fqdn`"
-sync_one_filesystem /tmp localhost /tmp
+#sync_one_filesystem /tmp localhost /tmp
