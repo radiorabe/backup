@@ -190,7 +190,8 @@ if [ -z $BACKUP_SERVER ]; then
   return 1
 fi
 
-if $BIN_SSH -O ${STD_SSH_OPTIONS} root@${BACKUP_SERVER} ls -1 &>/dev/null;
+logging -n "check_backupserver(): Connecting ${BACKUP_SERVER}"
+if ${BIN_SSH} -o "${STD_SSH_OPTIONS}" root@${BACKUP_SERVER} ls;
 then
   logging -n "Backup server $BACKUP_SERVER found and reachable"
   return 0
@@ -227,6 +228,4 @@ if ! checkRequirements; then shutdown_backup 1
 fi
 
 load_config
-
-logging -i "Starting backup at `hostname --fqdn`"
 backup_filesystems "$STD_BACKUP_DIRS"
