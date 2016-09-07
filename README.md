@@ -56,8 +56,7 @@ As root:
 	19:04:52 Info:     check_backupserver(): backup.***REMOVED*** found and reachable
 	19:04:52 Info:     Starting backup now and logging to /tmp/tmp.z8M3EMSlIp
 	19:04:55 Success:  Backup successfully finished!
-	[root@vm-0011 backup]#
-[root@vm-0011 ~]#
+	[root@vm-0011 ~]#
 
 ## License
 
