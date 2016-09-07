@@ -31,6 +31,7 @@ BACKUP_DIRS="/etc /home /root /srv /usr/local /var/log /var/local /var/spool /va
 BIN_SSH=`which ssh`				# find path to ssh
 STD_SSH_OPTIONS="PasswordAuthentication=no"	# only with publickey
 BIN_RSYNC=`which rsync`				# find path to ssh
+BIN_MKTEMP=`which mktemp`			# find path to mktemp
 
 # trap keyboard interrupt (control-c)
 trap control_c SIGINT
@@ -125,6 +126,8 @@ logging -d "Checking backup script requirements"
 if [ -z $BIN_RSYNC ]; then RequirementsMsg=rsync
 fi
 if [ -z $BIN_SSH ]; then RequirementsMsg=ssh
+fi
+if [ -z $BIN_MKTEMP ]; then RequirementsMsg=mktemp
 fi
 
 if [ ! -z $RequirementsMsg ];
