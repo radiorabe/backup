@@ -19,15 +19,15 @@
 #
 # Constants --------------------------------------------------------------------
 #
-TMPDIR=/tmp					# here to put temporary files
 DEBUG=0						# debug level 0-3
 VERBOSE=3					# verbosity level
 CONFIG_DIR=/etc/`basename "$0" .sh`		# config directory
-BACKUP_SERVER=""				# loaded by config file
-STD_RSYNC_OPTIONS="--verbose --archive --recursive --acls --devices \
+BACKUP_SRV=""					# loaded by config file
+BACKUP_SRV_DIR="/export/remote-backup/hosts/`hostname -s`"
+RSYNC_OPTIONS="--verbose --archive --recursive --acls --devices \
 --specials --delete --numeric-ids --timeout=120 --delete-excluded \
 --stats --human-readable --inplace -n"
-STD_BACKUP_DIRS="/etc /home /root /srv /usr/local /var/log /var/local /var/spool /var/backup"
+BACKUP_DIRS="/etc /home /root /srv /usr/local /var/log /var/local /var/spool /var/backup"
 BIN_SSH=`which ssh`				# find path to ssh
 STD_SSH_OPTIONS="PasswordAuthentication=no"	# only with publickey
 BIN_RSYNC=`which rsync`				# find path to ssh
@@ -185,17 +185,23 @@ check_backupserver()
 {
 
 # Validate destination path variable
-if [ -z $BACKUP_SERVER ]; then
+if [ -z $BACKUP_SRV ]; then
   logging -e "Oops! Backup server is not set."
   return 1
 fi
 
-logging -n "check_backupserver(): Connecting ${BACKUP_SERVER}"
-if ${BIN_SSH} -o "${STD_SSH_OPTIONS}" root@${BACKUP_SERVER} ls;
+if [ -z $BACKUP_SRV_DIR ]; then
+  logging -e "Oops! Remote directory of backup server is not set."
+  return 1
+fi
+
+logging -n "check_backupserver(): Connecting ${BACKUP_SRV}"
+if ${BIN_SSH} -o "${STD_SSH_OPTIONS}" root@${BACKUP_SRV} test -d $BACKUP_SRV_DIR;
 then
-  logging -n "Backup server $BACKUP_SERVER found and reachable"
+  logging -i "check_backupserver(): $BACKUP_SRV found and reachable"
   return 0
 else
+  logging -e "check_backupserver(): ${BACKUP_SRV}:${BACKUP_SRV_DIR} directory not found"
   return 1
 fi
 
@@ -228,4 +234,4 @@ if ! checkRequirements; then shutdown_backup 1
 fi
 
 load_config
-backup_filesystems "$STD_BACKUP_DIRS"
+backup_filesystems "BACKUP_DIRS"

@@ -31,7 +31,7 @@ Radio RaBe Backup process and automation scripts.
 
 	mkdir /etc/rabe-fs-backup
 	touch /etc/rabe-fs-backup/rabe-fs-backup.conf
-	echo "BACKUP_SERVER=backup.domain.tld" >/etc/rabe-fs-backup/rabe-fs-backup.conf
+	echo "BACKUP_SRV=backup.domain.tld" >/etc/rabe-fs-backup/rabe-fs-backup.conf
 
 ## License
 
