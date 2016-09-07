@@ -22,6 +22,7 @@
 DEBUG=0						# debug level 0-3
 VERBOSE=3					# verbosity level
 CONFIG_DIR=/etc/`basename "$0" .sh`		# config directory
+LOGFILE="/var/log/`basename "$0" .sh`.log"	# rsync logfile.
 BACKUP_SRV=""					# loaded by config file
 BACKUP_SRV_DIR="/export/remote-backup/hosts/`hostname -s`"
 RSYNC_OPTIONS="--verbose --archive --recursive --acls --devices \
@@ -263,7 +264,6 @@ then
   return 1
 fi
 
-LOGFILE=`mktemp`
 logging -i "Starting backup now and logging to $LOGFILE"
 
 for dir in $BACKUP_DIRS;
@@ -282,7 +282,6 @@ then
   return 1
 else
   logging -s "Backup successfully finished!"
-  rm $LOGFILE
   return 0
 fi
 
