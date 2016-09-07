@@ -228,7 +228,6 @@ if [ -z $BACKUP_SRV_DIR ]; then
   return 1
 fi
 
-logging -n "check_backupserver(): Connecting ${BACKUP_SRV}"
 if ${BIN_SSH} -o "${STD_SSH_OPTIONS}" root@${BACKUP_SRV} test -d $BACKUP_SRV_DIR;
 then
   logging -i "check_backupserver(): $BACKUP_SRV found and reachable"
