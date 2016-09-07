@@ -32,6 +32,7 @@ BIN_SSH=`which ssh`				# find path to ssh
 STD_SSH_OPTIONS="PasswordAuthentication=no"	# only with publickey
 BIN_RSYNC=`which rsync`				# find path to ssh
 BIN_MKTEMP=`which mktemp`			# find path to mktemp
+BIN_GREP=`which grep`
 
 # trap keyboard interrupt (control-c)
 trap control_c SIGINT
@@ -128,6 +129,8 @@ fi
 if [ -z $BIN_SSH ]; then RequirementsMsg=ssh
 fi
 if [ -z $BIN_MKTEMP ]; then RequirementsMsg=mktemp
+fi
+if [ -z $BIN_GREP ]; then RequirementsMsg=grep
 fi
 
 if [ ! -z $RequirementsMsg ];
@@ -268,10 +271,16 @@ done
 
 if [ $status != 0 ];
 then
-  logging -e "Ooops! Something went wrong, please check logfile at ${LOGFILE}:"
+  logging -e "Ooops! Something went wrong"
+  logging -a "Please check logfile at ${LOGFILE}:"
+  logging -a "-------------------------------------------------------------"
+  $BIN_GREP -iE "failed|error|rsync:" -A 10 -B 10 $LOGFILE
+  logging -a "-------------------------------------------------------------"
+  return 1
 else
   logging -s "Backup successfully finished!"
   rm $LOGFILE
+  return 0
 fi
 
 }
