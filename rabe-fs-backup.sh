@@ -32,6 +32,25 @@ BIN_SSH=`which ssh`				# find path to ssh
 STD_SSH_OPTIONS="PasswordAuthentication=no"	# only with publickey
 BIN_RSYNC=`which rsync`				# find path to ssh
 
+# trap keyboard interrupt (control-c)
+trap control_c SIGINT
+
+control_c()
+#
+# Description:  run if user hits control-c
+#
+# Parameter  :  none
+#
+# Output     :  logging
+#
+{
+if [ $DEBUG -ge 3 ]; then set -x
+fi
+
+logging -i "CTRL-C catched"
+shutdown_backup 0
+}
+
 logging()
 #
 # Description:  It writes messages to logfile or standard output.
@@ -147,7 +166,7 @@ ExitCode=$1
 
 case $ExitCode in
 	0)
-	  logging -s "backup exiting..."
+	  logging -s "Backup stopped"
 	;;
 	1)
 	  logging -w "backup stopped partionally unsuccuessfull"
