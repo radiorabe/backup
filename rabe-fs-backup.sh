@@ -119,6 +119,14 @@ if [ ! -d $CONFIG_DIR ]; then
   return 1
 fi
 
+for dir in $BACKUP_DIRS;
+do
+  if ! test -d $dir;
+  then
+    logging -w "Oops! $dir is configured for backup, but doesn't exist"
+  fi
+done
+
 return 0
 }
 
