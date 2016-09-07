@@ -248,6 +248,7 @@ backup_filesystems()
 {
 
 local dirs_to_backup="$1"
+local status=0
 logging -n "backup_filesystems(): Dirs to backup $dirs_to_backup"
 
 if ! check_backupserver;
@@ -256,10 +257,22 @@ then
   return 1
 fi
 
+LOGFILE=`mktemp`
+logging -i "Starting backup now and logging to $LOGFILE"
+
 for dir in $BACKUP_DIRS;
 do
-  $BIN_RSYNC $RSYNC_OPTIONS $dir root@${BACKUP_SRV}:${BACKUP_SRV_DIR}
+  $BIN_RSYNC $RSYNC_OPTIONS $dir root@${BACKUP_SRV}:${BACKUP_SRV_DIR} \
+	&>>${LOGFILE} || status=$?
 done
+
+if [ $status != 0 ];
+then
+  logging -e "Ooops! Something went wrong, please check logfile at ${LOGFILE}:"
+else
+  logging -s "Backup successfully finished!"
+  rm $LOGFILE
+fi
 
 }
 
@@ -268,4 +281,4 @@ if ! checkRequirements; then shutdown_backup 1
 fi
 
 load_config
-backup_filesystems "BACKUP_DIRS"
+backup_filesystems "$BACKUP_DIRS"
