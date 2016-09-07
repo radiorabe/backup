@@ -285,11 +285,59 @@ else
   return 0
 fi
 
+} # // backup_filesystems()
+
+usage()
+#
+# Description:  shows help text
+#
+# Parameter  :  none
+#
+# Output     :  shows help text
+#
+{
+cat << EOF
+
+usage: $(basename $0) -q
+
+OPTIONS:
+  -r	Run backup
+  -q    Run backup in quiet/cron mode
+
+
+EOF
+return 0
 }
 
 # CheckRequirements before do anything
 if ! checkRequirements; then shutdown_backup 1
 fi
-
 load_config
-backup_filesystems "$BACKUP_DIRS"
+
+# When you need an argument that needs a value, you put the ":" right after
+# the argument in the optstring. If your var is just a flag, withou any
+# additional argument, just leave the var, without the ":" following it.
+#
+# please keep letters in alphabetic order
+#
+while getopts "rq" OPTION
+do
+  case $OPTION in
+    r)
+	backup_filesystems "$BACKUP_DIRS"
+	shutdown_backup $?
+	;;
+    q)
+	exec 1>/dev/null
+	backup_filesystems "$BACKUP_DIRS"
+	shutdown_backup $?
+      ;;
+    \?)
+      usage
+      shutdown_backup 1
+      ;;
+  esac
+done
+
+usage
+exit 0
