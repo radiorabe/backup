@@ -216,6 +216,8 @@ check_backupserver()
 # Output     :  exit code
 #
 {
+if [ $DEBUG -ge 3 ]; then set -x
+fi
 
 # Validate destination path variable
 if [ -z $BACKUP_SRV ]; then
@@ -248,6 +250,8 @@ backup_filesystems()
 # Output     :  exit code
 #
 {
+if [ $DEBUG -ge 3 ]; then set -x
+fi
 
 local dirs_to_backup="$1"
 local status=0
