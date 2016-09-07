@@ -26,7 +26,7 @@ BACKUP_SRV=""					# loaded by config file
 BACKUP_SRV_DIR="/export/remote-backup/hosts/`hostname -s`"
 RSYNC_OPTIONS="--verbose --archive --recursive --acls --devices \
 --specials --delete --numeric-ids --timeout=120 --delete-excluded \
---stats --human-readable --inplace -n"
+--stats --human-readable --inplace"
 BACKUP_DIRS="/etc /home /root /srv /usr/local /var/log /var/local /var/spool /var/backup"
 BIN_SSH=`which ssh`				# find path to ssh
 STD_SSH_OPTIONS="PasswordAuthentication=no"	# only with publickey
@@ -226,6 +226,10 @@ then
   return 1
 fi
 
+for dir in $BACKUP_DIRS;
+do
+  $BIN_RSYNC $RSYNC_OPTIONS $dir root@${BACKUP_SRV}:${BACKUP_SRV_DIR}
+done
 
 }
 
