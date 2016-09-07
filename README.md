@@ -18,8 +18,7 @@ Radio RaBe Backup process and automation scripts.
 ## Concepts
 
 * Auf jeder Client VM liegt das `backup.sh` Script.
-* Es werden die Pfade `/etc /home /root /srv /usr/local /var/log /var/local /var/spool /var/backup` mit rsync gesichert
-  gesichert. 
+* Es werden die Pfade `/etc /home /root /srv /usr/local /var/log /var/local /var/spool /var/backup` mit rsync gesichert. 
 * Weitere zu sichernde Pfade werden in die Datei `/etc/rabe-fs-backup/rabe-fs-backup.conf` eingetragen.
 * Weitere **nicht** zu sichernde Pfade werden in die Datei `/etc/rabe-fs-backup/rabe-fs-backup.conf`
   eingetragen.
