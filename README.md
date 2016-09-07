@@ -29,9 +29,26 @@ Radio RaBe Backup process and automation scripts.
 
 ## Setup
 
+### Backup Client
+
+As root:
+
 	mkdir /etc/rabe-fs-backup
 	touch /etc/rabe-fs-backup/rabe-fs-backup.conf
 	echo "BACKUP_SRV=backup.domain.tld" >/etc/rabe-fs-backup/rabe-fs-backup.conf
+
+Generate a ssh key pair without passphrase:
+
+	ssh-keygen
+	Generating public/private rsa key pair.
+	Enter file in which to save the key (/root/.ssh/id_rsa)
+
+### Backup Server
+
+As root:
+
+	mkdir /export/remote-backup/hosts/${hostname-of-backup-client}
+	cat ${authorized-key-backup-cient} >>~/.ssh/authorized_keys
 
 ## Usage
 
