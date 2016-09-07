@@ -18,10 +18,10 @@ Radio RaBe Backup process and automation scripts.
 ## Concepts
 
 * Auf jeder Client VM liegt das `backup.sh` Script.
-* Es werden die Pfade `/` und `/boot` mit der rsync option `--one-file-system`
+* Es werden die Pfade `/etc /home /root /srv /usr/local /var/log /var/local /var/spool /var/backup` mit rsync gesichert
   gesichert. 
-* Weitere zu sichernde Pfade werden in die Datei `/etc/backup.include` eingetragen.
-* Weitere **nicht** zu sichernde Pfade werden in die Datei `/etc/backup.exclude`
+* Weitere zu sichernde Pfade werden in die Datei `/etc/rabe-fs-backup/rabe-fs-backup.conf` eingetragen.
+* Weitere **nicht** zu sichernde Pfade werden in die Datei `/etc/rabe-fs-backup/rabe-fs-backup.conf`
   eingetragen.
 * Das Script läuft mittels cron und pro VM.
 * Um Überlast auf dem Backup Server zu vermeiden, wird der Backup mit einer zufälligen
@@ -32,6 +32,16 @@ Radio RaBe Backup process and automation scripts.
 	mkdir /etc/rabe-fs-backup
 	touch /etc/rabe-fs-backup/rabe-fs-backup.conf
 	echo "BACKUP_SRV=backup.domain.tld" >/etc/rabe-fs-backup/rabe-fs-backup.conf
+
+## Usage
+
+	[root@vm-0011 ~]# /usr/local/bin/rabe-fs-backup.sh
+	19:04:52 Notice:   backup_filesystems(): Dirs to backup /etc /home /root /srv /usr/local /var/log /var/local /var/spool /var/backup
+	19:04:52 Info:     check_backupserver(): backup.***REMOVED*** found and reachable
+	19:04:52 Info:     Starting backup now and logging to /tmp/tmp.z8M3EMSlIp
+	19:04:55 Success:  Backup successfully finished!
+	[root@vm-0011 backup]#
+[root@vm-0011 ~]#
 
 ## License
 
