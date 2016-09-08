@@ -24,6 +24,7 @@ VERBOSE=3					# verbosity level
 PN="`basename "$0" .sh`"
 CONFIG_DIR="/etc/${PN}"				# config directory
 LOGFILE="/var/log/${PN}.log"			# rsync logfile.
+SPOOL_DIR="/var/spool/${PN}"			# spool dir
 BACKUP_SRV=""					# loaded by config file
 BACKUP_SRV_DIR="/export/remote-backup/hosts/`hostname -s`"
 RSYNC_OPTIONS="--verbose --archive --recursive --acls --devices \
@@ -144,6 +145,10 @@ fi
 if [ ! -d $CONFIG_DIR ]; then
   logging -e "Config dir $CONFIG_DIR does not exist."
   return 1
+fi
+
+if [ ! -d $SPOOL_DIR ]; then
+  mkdir -p $SPOOL_DIR &&  logging -s "Creating $SPOOL_DIR"
 fi
 
 for dir in $BACKUP_DIRS;
@@ -285,6 +290,7 @@ then
   return 1
 else
   logging -s "Backup successfully finished!"
+  touch ${SPOOL_DIR}/${PN}
   return 0
 fi
 
