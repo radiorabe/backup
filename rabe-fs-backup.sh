@@ -30,11 +30,11 @@ RSYNC_OPTIONS="--verbose --archive --recursive --acls --devices \
 --specials --delete --numeric-ids --timeout=120 --delete-excluded \
 --stats --human-readable --inplace"
 BACKUP_DIRS="/etc /home /root /srv /usr/local /var/log /var/local /var/spool /var/backup"
-BIN_SSH=`which ssh`				# find path to ssh
 STD_SSH_OPTIONS="PasswordAuthentication=no"	# only with publickey
-BIN_RSYNC=`which rsync`				# find path to ssh
+BIN_SSH=`which ssh`				# find path to ssh
+BIN_RSYNC=`which rsync`				# find path to rsync
 BIN_MKTEMP=`which mktemp`			# find path to mktemp
-BIN_GREP=`which grep`
+BIN_GREP=`which grep`				# find path to grep
 
 # trap keyboard interrupt (control-c)
 trap control_c SIGINT
@@ -169,7 +169,6 @@ shutdown_backup()
 if [ $DEBUG -ge 3 ]; then set -x
 fi
 
-logging -n "Shutting down backup..."
 ExitCode=$1
 
 case $ExitCode in
@@ -177,11 +176,11 @@ case $ExitCode in
 	  logging -s "$PN has stopped"
 	;;
 	1)
-	  logging -w "$PN stopped partionally unsuccuessfull"
+	  logging -n "$PN stopped"
 	;;
 esac
-logging -d "Returnvalue=$ExitCode"
 
+logging -a "Returnvalue=$ExitCode"
 exit $ExitCode
 }
 
@@ -234,10 +233,12 @@ fi
 
 if ${BIN_SSH} -o "${STD_SSH_OPTIONS}" root@${BACKUP_SRV} test -d $BACKUP_SRV_DIR;
 then
-  logging -i "check_backupserver(): $BACKUP_SRV found and reachable"
+  logging -i "Backup server found and reachable:"
+  logging -a "$BACKUP_SRV"
   return 0
 else
-  logging -e "check_backupserver(): ${BACKUP_SRV}:${BACKUP_SRV_DIR} directory not found"
+  logging -e "Backup dir doesn't exist at:"
+  logging -a "${BACKUP_SRV}:${BACKUP_SRV_DIR}"
   return 1
 fi
 
@@ -257,15 +258,16 @@ fi
 
 local dirs_to_backup="$1"
 local status=0
-logging -n "backup_filesystems(): Dirs to backup $dirs_to_backup"
+logging -n "Selected dirs to backup:"
+logging -a "$dirs_to_backup"
 
 if ! check_backupserver;
 then
-  logging -e "Oops! Problem with backup server"
   return 1
 fi
 
-logging -i "Starting backup now and logging to $LOGFILE"
+logging -i "Starting backup..."
+logging -a "Logging to $LOGFILE"
 
 for dir in $BACKUP_DIRS;
 do
