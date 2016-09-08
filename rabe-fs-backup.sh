@@ -21,8 +21,9 @@
 #
 DEBUG=0						# debug level 0-3
 VERBOSE=3					# verbosity level
-CONFIG_DIR=/etc/`basename "$0" .sh`		# config directory
-LOGFILE="/var/log/`basename "$0" .sh`.log"	# rsync logfile.
+PN="`basename "$0" .sh`"
+CONFIG_DIR="/etc/${PN}"				# config directory
+LOGFILE="/var/log/${PN}.log"			# rsync logfile.
 BACKUP_SRV=""					# loaded by config file
 BACKUP_SRV_DIR="/export/remote-backup/hosts/`hostname -s`"
 RSYNC_OPTIONS="--verbose --archive --recursive --acls --devices \
@@ -173,10 +174,10 @@ ExitCode=$1
 
 case $ExitCode in
 	0)
-	  logging -s "Backup stopped"
+	  logging -s "$PN has stopped"
 	;;
 	1)
-	  logging -w "backup stopped partionally unsuccuessfull"
+	  logging -w "$PN stopped partionally unsuccuessfull"
 	;;
 esac
 logging -d "Returnvalue=$ExitCode"
@@ -298,7 +299,7 @@ usage()
 {
 cat << EOF
 
-usage: $(basename $0) -q
+usage: $PN -r|-q
 
 OPTIONS:
   -r	Run backup
