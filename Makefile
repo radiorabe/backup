@@ -16,11 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with radiorabe backup.  If not, see <http://www.gnu.org/licenses/>.
 
-PN		= rabe-fs-backup.sh
+PN		= rabe-fs-backup
 
 #PREFIX		?= /usr/local
 PREFIX		?= .
 BINDIR		= $(PREFIX)/bin
+ETCDIR		= $(PREFIX)/etc
 DOCDIR		= $(PREFIX)/share/doc/$(PN)
 MAN1DIR		= $(PREFIX)/share/man/man1
 
@@ -28,7 +29,7 @@ all:
 
 test:
 	@echo Testing script syntax...
-	bash -n $(PREFIX)/$(PN)
+	bash -n $(PREFIX)/$(PN).sh
 	@echo done.
 
 clean:
@@ -38,7 +39,8 @@ clean:
 
 install-bin:
 	@echo 'installing main script...'
-	install -Dm755 $(PN) "$(DESTDIR)$(BINDIR)/$(PN)"
+	install -Dm755 $(PN).sh "$(BINDIR)/$(PN).sh"
+	install -Dm755 config/$(PN).conf "$(ETCDIR)/$(PN).conf"
 
 install-man:
 
