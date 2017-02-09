@@ -58,6 +58,11 @@ As root:
 	19:04:55 Success:  Backup successfully finished!
 	[root@vm-0011 ~]#
 
+### systemd timer
+
+        # run daily through systemd
+        systemctl enable rabe-fs-backup.timer
+
 ## RPM Package
 
 This script is available as an RPM package for CentOS 7. We provide a pre-built version
