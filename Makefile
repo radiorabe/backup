@@ -21,7 +21,7 @@ PN		= rabe-fs-backup
 #PREFIX		?= /usr/local
 PREFIX		?= .
 BINDIR		= $(PREFIX)/bin
-ETCDIR		= $(PREFIX)/etc
+ETCDIR		?= $(PREFIX)/etc
 DOCDIR		= $(PREFIX)/share/doc/$(PN)
 MAN1DIR		= $(PREFIX)/share/man/man1
 

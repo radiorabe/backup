@@ -25,6 +25,7 @@
 #
 
 %define _repo_name backup
+%define _prog_name rabe-fs-backup
 
 Name:          rabe-backup
 Version:       0.0.0
@@ -50,10 +51,10 @@ Radio RaBe Backup process and automation scripts.
 make -j2
 
 %install
-make install PREFIX=%{buildroot}
+make install PREFIX=%{buildroot} ETCDIR=%{buildroot}%{_sysconfdir}/%{_prog_name}
 
 %files
 %doc LICENSE README.md
-%config %{_sysconfdir}/rabe-fs-backup.conf
+%config %{_sysconfdir}/%{_prog_name}/%{_prog_name}.conf
 %defattr(-,root,root,0755)
-/bin/rabe-fs-backup.sh
+/bin/%{_prog_name}.sh
