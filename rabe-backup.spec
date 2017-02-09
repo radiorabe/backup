@@ -51,10 +51,10 @@ Radio RaBe Backup process and automation scripts.
 make -j2
 
 %install
-make install PREFIX=%{buildroot} ETCDIR=%{buildroot}%{_sysconfdir}/%{_prog_name}
+make install PREFIX=%{buildroot}%{_prefix} ETCDIR=%{buildroot}%{_sysconfdir}/%{_prog_name}
 
 %files
 %doc LICENSE README.md
 %config %{_sysconfdir}/%{_prog_name}/%{_prog_name}.conf
 %defattr(-,root,root,0755)
-/bin/%{_prog_name}.sh
+%{_bindir}/%{_prog_name}.sh
