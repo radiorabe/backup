@@ -1,8 +1,8 @@
 [Unit]
-Description=Run RaBe Backup Service timer daily
+Description=Run RaBe Backup Service daily
 
 [Timer]
-# Run once per day
+# Run once per day at midnight ("*-*-* 00:00:00")
 OnCalendar=daily
 # Start immediately if last start was missed (ie when machine was down)
 Persistent=true
@@ -12,8 +12,6 @@ RandomizedDelaySec=30min
 AccuracySec=1us
 # try waking system if possible
 WakeSystem=true
-# Specify the service to be run
-Unit=airtime-backup.service
 
 [Install]
 WantedBy=timers.target
