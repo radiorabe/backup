@@ -37,9 +37,11 @@ Source:        %{name}-%{version}.tar.gz
 BuildArch:     noarch
 
 BuildRequires: make
+BuildRequires: systemd
 
 Requires:      rsync
 Requires:      openssh-clients
+%{?systemd_requires}
 
 %description
 Radio RaBe Backup process and automation scripts.
@@ -53,16 +55,19 @@ make -j2
 %install
 make install PREFIX=%{buildroot}%{_prefix} ETCDIR=%{buildroot}%{_sysconfdir}/%{_prog_name}
 
+%post
+%systemd_post %{_prog_name}.timer
+
 %preun
-if [ $1 -eq 0 ] ; then
-  # Package removal, not upgrade
-  systemctl --no-reload disable --now %{_prog_name}.timer > /dev/null 2>&1 || :
-fi
+%systemd_preun %{_prog_name}.timer
+
+%postun
+%systemd_postun %{_prog_name}.timer
 
 %files
 %doc LICENSE README.md
 %config %{_sysconfdir}/%{_prog_name}/%{_prog_name}.conf
 %defattr(-,root,root,0755)
 %{_bindir}/%{_prog_name}.sh
-%attr(550, -, -) %{_exec_prefix}/lib/systemd/system/%{_prog_name}.service
-%attr(550, -, -) %{_exec_prefix}/lib/systemd/system/%{_prog_name}.timer
+%attr(550, -, -) %{_unitdir}/%{_prog_name}.service
+%attr(550, -, -) %{_unitdir}/%{_prog_name}.timer
