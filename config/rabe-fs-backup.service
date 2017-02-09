@@ -1,0 +1,6 @@
+[Unit]
+Description=RaBe Backup Service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/rabe-fs-backup.sh

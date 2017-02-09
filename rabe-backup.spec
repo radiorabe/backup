@@ -58,3 +58,5 @@ make install PREFIX=%{buildroot}%{_prefix} ETCDIR=%{buildroot}%{_sysconfdir}/%{_
 %config %{_sysconfdir}/%{_prog_name}/%{_prog_name}.conf
 %defattr(-,root,root,0755)
 %{_bindir}/%{_prog_name}.sh
+%{_exec_prefix}/lib/systemd/system/%{_prog_name}.service
+%{_exec_prefix}/lib/systemd/system/%{_prog_name}.timer
