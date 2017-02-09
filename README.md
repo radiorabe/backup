@@ -60,22 +60,28 @@ As root:
 
 ### systemd timer
 
-	# run daily at midnight with 30 minute spread
-	systemctl enable rabe-fs-backup.timer
+```bash
+# run daily at midnight with 30 minute spread
+systemctl enable rabe-fs-backup.timer
+```
 
-You can change the timer to anything from [systemd.time Calendar Events](https://www.freedesktop.org/software/systemd/man/systemd.time.html#Calendar%20Events) it
-is configured with `RandomizedDelaySec=30min` to help spread out the load on the server. You can override these settings as follows.
+You can change the timer to anything from [systemd.time Calendar Events](https://www.freedesktop.org/software/systemd/man/systemd.time.html#Calendar%20Events).
+It is configured with [`RandomizedDelaySec=30min`](https://www.freedesktop.org/software/systemd/man/systemd.timer.html#RandomizedDelaySec=) to help spread 
+out the load on the server. You can override these settings as follows.
 
-	mkdir -p /etc/systemd/system/rabe-fs-backup.d/
-	cat > /etc/systemd/system/rabe-fs-backup.d/override.conf <<EOD
-	[Timer]
-	# reset repeatable element OnCalendar
-	OnCalendar=
-	# time you want this to run at
-	OnCalendar=06:00
-	# may it run exact at the specified time without any spreading
-	RandomizedDelaySec=0
-	EOD
+```bash
+mkdir -p /etc/systemd/system/rabe-fs-backup.d/
+
+cat > /etc/systemd/system/rabe-fs-backup.d/override.conf <<EOD
+[Timer]
+# reset repeatable element OnCalendar
+OnCalendar=
+# time you want this to run at
+OnCalendar=06:00
+# may it run exactly at the specified time without any spreading
+RandomizedDelaySec=0
+EOD
+```
 
 ## RPM Package
 
