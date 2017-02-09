@@ -53,6 +53,12 @@ make -j2
 %install
 make install PREFIX=%{buildroot}%{_prefix} ETCDIR=%{buildroot}%{_sysconfdir}/%{_prog_name}
 
+%preun
+if [ $1 -eq 0 ] ; then
+  # Package removal, not upgrade
+  systemctl --no-reload disable --now %{_prog_name}.timer > /dev/null 2>&1 || :
+fi
+
 %files
 %doc LICENSE README.md
 %config %{_sysconfdir}/%{_prog_name}/%{_prog_name}.conf
