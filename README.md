@@ -58,6 +58,28 @@ As root:
 	19:04:55 Success:  Backup successfully finished!
 	[root@vm-0011 ~]#
 
+## RPM Package
+
+This script is available as an RPM package for CentOS 7. We provide a pre-built version
+through the [openSUSE Build Server](https://build.opensuse.org/) as part of 
+the [home:radiorabe:backup Subproject](https://build.opensuse.org/project/show/home:radiorabe:backup). You can install it as follows.
+
+```bash
+curl -o /etc/yum.repos.d/home:radiorabe:backup.repo \
+     http://download.opensuse.org/repositories/home:/radiorabe:/backup/CentOS_7/home:radiorabe:backup.repo
+
+yum install rabe-backup
+```
+
+## Releasing
+
+New RPMs get built for all tags with a valid version. New releases are created through git.
+
+* Bump the version in rabe-backup.spec and add a new commit to master with the version bump
+* Tag this commit with the same version you used in the specfile
+* Push master and the tag to github
+* The openSUSE Build Service should get triggered and build a new package automagically
+
 ## License
 
 Radio RaBe Backup process and automation scripts is released under the terms of the
