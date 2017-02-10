@@ -21,9 +21,11 @@ PN		= rabe-fs-backup
 #PREFIX		?= /usr/local
 PREFIX		?= .
 BINDIR		= $(PREFIX)/bin
-ETCDIR		= $(PREFIX)/etc
+LIBDIR		= $(PREFIX)/lib
+ETCDIR		?= $(PREFIX)/etc
 DOCDIR		= $(PREFIX)/share/doc/$(PN)
 MAN1DIR		= $(PREFIX)/share/man/man1
+UNITDIR		= $(LIBDIR)/systemd/system
 
 all:
 
@@ -41,6 +43,9 @@ install-bin:
 	@echo 'installing main script...'
 	install -Dm755 $(PN).sh "$(BINDIR)/$(PN).sh"
 	install -Dm755 config/$(PN).conf "$(ETCDIR)/$(PN).conf"
+	@echo 'installing systemd services...'
+	install -Dm550 config/$(PN).service "$(UNITDIR)/$(PN).service"
+	install -Dm550 config/$(PN).timer "$(UNITDIR)/$(PN).timer"
 
 install-man:
 
