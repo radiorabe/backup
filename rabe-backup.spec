@@ -32,7 +32,7 @@ Version:       0.0.1
 Release:       0
 Summary:       RaBe Backup process and automation scripts
 License:       AGPLv3
-Source:        %{name}-%{version}.tar.gz
+Source:        %{_repo_name}-%{version}.tar.gz
 
 BuildArch:     noarch
 
