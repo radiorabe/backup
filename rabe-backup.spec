@@ -28,7 +28,7 @@
 %define _prog_name rabe-fs-backup
 
 Name:          rabe-backup
-Version:       0.0.1
+Version:       0.0.2
 Release:       0
 Summary:       RaBe Backup process and automation scripts
 License:       AGPLv3
