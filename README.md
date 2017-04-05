@@ -4,27 +4,21 @@ Radio RaBe Backup process and automation scripts.
 
 ## System Context
 
-### Client VM
-
-* **Backupper Script**: welches die zu sichernden Daten synchronisiert.
-
-### Backup Server
-
-* **BTRFS Filesystem**: das die gesicherten Daten vorhält und Revisionssicherheit
-  gewährleistet.
-* **Self-Restore**: Auf dem Backup Server ist ein NFS Service, der dem Nutzer Zugriff
-  auf seine Sicherungen gibt.
+* Das **Backupper Script** holt die Daten vom Zielsystem (vm oder share) ab.
+* Die Daten werden auf dem **BTRFS Filesystem** revisionssicher abgelegt.
+* Auf dem Backup Server wird die Möglichkeit zum **Self-Restore** mittels NFS
+  oder Samba Service angeboten.
 
 ## Concepts
 
-* Auf jeder Client VM liegt das `backup.sh` Script.
-* Es werden die Pfade `/etc /home /root /srv /usr/local /var/log /var/local /var/spool /var/backup` mit rsync gesichert. 
-* Weitere zu sichernde Pfade werden in die Datei `/etc/rabe-fs-backup/rabe-fs-backup.conf` eingetragen.
-* Weitere **nicht** zu sichernde Pfade werden in die Datei `/etc/rabe-fs-backup/rabe-fs-backup.conf`
-  eingetragen.
-* Das Script läuft mittels cron und pro VM.
-* Um Überlast auf dem Backup Server zu vermeiden, wird der Backup mit einer zufälligen
-  anzahl Sekunden verzögert ausgeführt. 
+* Das Backup Script liegt auf dem Backup-Server.
+* Es werden die Pfade `/etc /home /root /srv /usr/local /var/log /var/local
+  /var/spool /var/backup` mit rsync gesichert.
+* Weitere zu sichernde Pfade werden in die Datei
+  `/etc/rabe-fs-backup/rabe-fs-backup.conf` eingetragen.
+* Weitere **nicht** zu sichernde Pfade werden in die Datei
+  `/etc/rabe-fs-backup/rabe-fs-backup.conf` eingetragen.
+* Das Script wird von cron oder systemd timer getriggert.
 
 ## Setup
 
