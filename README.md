@@ -12,45 +12,22 @@ Radio RaBe Backup process and automation scripts.
 ## Concepts
 
 * Das Backup Script liegt auf dem Backup-Server.
-* Es werden die Pfade `/etc /home /root /srv /usr/local /var/log /var/local
+* Es werden die Pfade `/etc /home /root /usr/local /var/log /var/local
   /var/spool /var/backup` mit rsync gesichert.
-* Weitere zu sichernde Pfade werden in die Datei
-  `/etc/rabe-fs-backup/rabe-fs-backup.conf` eingetragen.
-* Weitere **nicht** zu sichernde Pfade werden in die Datei
-  `/etc/rabe-fs-backup/rabe-fs-backup.conf` eingetragen.
 * Das Script wird von cron oder systemd timer getriggert.
 
 ## Setup
 
-### Backup Client
+As root on the backup server:
 
-As root:
-
-	mkdir /etc/rabe-fs-backup
-	touch /etc/rabe-fs-backup/rabe-fs-backup.conf
-	echo "BACKUP_SRV=backup.domain.tld" >/etc/rabe-fs-backup/rabe-fs-backup.conf
-
-Generate a ssh key pair without passphrase:
-
-	ssh-keygen
-	Generating public/private rsa key pair.
-	Enter file in which to save the key (/root/.ssh/id_rsa)
-
-### Backup Server
-
-As root:
-
-	mkdir /export/remote-backup/hosts/${hostname-of-backup-client}
-	cat ${authorized-key-backup-cient} >>~/.ssh/authorized_keys
+	su - backup
+	git clone https://github.com/radiorabe/backup
 
 ## Usage
 
-	[root@vm-0011 ~]# /usr/local/bin/rabe-fs-backup.sh
-	19:04:52 Notice:   backup_filesystems(): Dirs to backup /etc /home /root /srv /usr/local /var/log /var/local /var/spool /var/backup
-	19:04:52 Info:     check_backupserver(): backup.***REMOVED*** found and reachable
-	19:04:52 Info:     Starting backup now and logging to /tmp/tmp.z8M3EMSlIp
-	19:04:55 Success:  Backup successfully finished!
-	[root@vm-0011 ~]#
+As root:
+
+	/home/backup/backup/backup-fs-vms.sh
 
 ### systemd timer
 
