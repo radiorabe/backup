@@ -33,7 +33,7 @@ As root:
 
 Since it is not finished yet, I parked packaging files (-see
 [README.md](https://github.com/radiorabe/backup/blob/legacy/README.md)) in the
-branch [legacy](https://github.com/radiorabe/backup/blob/legacy).
+branch [legacy](https://github.com/radiorabe/backup/tree/legacy).
 
 ## License
 
