@@ -1,24 +1,78 @@
 #!/bin/sh
+#
+#    This file is part of `Radio RaBe Backup process and automation scripts`
+#    Copyright (C) 2016 Radio Bern RaBe
+#    https://github.com/radiorabe/backup
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#
+# Constants --------------------------------------------------------------------
+#
+BACKUP_DIRS="etc home root usr/local var/log var/local var/spool var/backup"
+BACKUP_DST_DIR=/srv/backup/remote-backup
+VMS=("vm-0001" "vm-0002" "vm-0003" "vm-0005" "vm-0006" "vm-0007" "vm-0008" "vm-0009" "vm-0010" "vm-0011" "vm-0012" "vm-0013" "vm-0014" "vm-0015" "vm-0016" "vm-0017" "vm-0018" "vm-0019" "vm-0020" "vm-0021")
 
-vms=("vm-0001" "vm-0002" "vm-0003" "vm-0005" "vm-0006" "vm-0007" "vm-0008" "vm-0009" "vm-0010" "vm-0011" "vm-0012" "vm-0013" "vm-0014" "vm-0015" "vm-0016" "vm-0017" "vm-0018" "vm-0019" "vm-0020" "vm-0021")
+# trap keyboard interrupt (control-c)
+trap control_c SIGINT
 
+control_c()
+#
+# Description:  run if user hits control-c
+#
+# Parameter  :  none
+#
+# Output     :  logging
+#
+{
+echo "$(date) CTRL-C catched"
+exit 1
+}
+
+# Main -------------------------------------------------------------------------
 mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bkp
 
-echo "$(date): Rsync backup of vms starting."
+echo "$(date): Rsync backup of VMS starting."
 
-for i in "${vms[@]}"
+for i in "${VMS[@]}"
 do
   ssh-keyscan $i.vm-admin.int.rabe.ch >> ~/.ssh/known_hosts 2>/dev/null
-  [ ! -d "$i" ] && mkdir $i
-  cd $i
-  for j in etc home root usr/local var/log var/local var/spool var/backup
+  for j in $BACKUP_DIRS
   do
   syncdir=$i.vm-admin.int.rabe.ch:/$j
-  rsync --rsync-path="sudo /bin/rsync" -azR $syncdir ./ &>/dev/null
+  rsync --rsync-path="sudo /bin/rsync" \
+	  --verbose \
+          --archive \
+          --recursive \
+          --acls \
+          --xattrs \
+          --devices \
+          --specials \
+          --rsh="/usr/bin/ssh -i /home/backup/.ssh/id_rsa -l backup" \
+          --delete \
+          --numeric-ids \
+          --timeout=120 \
+          --stats \
+          --human-readable \
+          --progress \
+          --inplace \
+          --one-file-system \
+          $syncdir ${BACKUP_DST_DIR}/${i} &>/dev/null
   ret=$?
   if [ $ret -eq "0" ]
   then
-    echo "Sync of $syncdir successfull!"
+    echo "Sync of $syncdir to ${BACKUP_DST_DIR}/${i} successfull!"
   elif [ $ret -eq "23" ]
   then
     echo "INFO: $syncdir does not exist."
@@ -38,3 +92,6 @@ done
 echo "$(date): Rsync backup finished."
 
 mv ~/.ssh/known_hosts.bkp ~/.ssh/known_hosts
+
+btrbk run
+echo "$(date): btrfs snapshot (btrbk) finished."
