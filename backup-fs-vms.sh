@@ -126,14 +126,14 @@ do
   elif [ $ret -eq "12" ]
   then
     echo "ERROR: Permission denied on $syncdir."
-    let "errrors++";
+    let "errors++";
   elif [ $ret -eq "255" ]
   then
     echo "ERROR: Host $i.***REMOVED*** is not online or could not be resolved."
-    let "errrors++";
+    let "errors++";
   else
    echo "ERROR: Unknown error ($ret) occured when trying to rsync $syncdir."
-   let "errrors++";
+   let "errors++";
   fi
   done
 
