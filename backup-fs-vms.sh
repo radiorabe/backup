@@ -145,7 +145,17 @@ fi
 done
 echo "$(date): Rsync backup finished."
 
-mv ~/.ssh/known_hosts.bkp ~/.ssh/known_hosts
+if btrbk run;
+then
+  echo "$(date): btrfs snapshot (btrbk) finished."
+else
+  let "errors++";
+fi
 
-btrbk run
-echo "$(date): btrfs snapshot (btrbk) finished."
+mv ~/.ssh/known_hosts.bkp ~/.ssh/known_hosts
+echo "$(date): Script finished; $errors errors occured."
+
+if [ $errors -gt 0 ];
+then
+  exit 1
+fi
