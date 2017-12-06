@@ -24,6 +24,43 @@ BACKUP_DIRS="etc home root usr/local var/log var/local var/spool var/backup"
 BACKUP_DST_DIR=/srv/backup/remote-backup
 VMS=("vm-0001" "vm-0002" "vm-0003" "vm-0005" "vm-0006" "vm-0007" "vm-0008" "vm-0009" "vm-0010" "vm-0011" "vm-0012" "vm-0013" "vm-0014" "vm-0015" "vm-0016" "vm-0017" "***REMOVED***" "vm-0019" "vm-0020" "vm-0021")
 
+function backup_success()
+{
+
+zabbixHostName=$(echo $1 | sed 's/vm-admin/service/g');
+startTime=$2;
+
+if [ -z $startTime ];
+then
+  echo "$(date) WARNING: Backup start time was not set!"
+  return 1
+fi
+
+if [ -z $zabbixHostName ];
+then
+  echo "$(date) WARNING: habbixHostName for success message not set!"
+  return 1
+fi
+
+timestamp=$(date +%s);
+duration=$(($timestamp - $startTime));
+Ret=0
+
+# Send the timestamp of the last successfull backup
+zabbix_sender --config /etc/zabbix/zabbix_agentd.conf \
+              --host "${zabbixHostName}" \
+              --key 'rabe.rabe-backup.run.success[]' \
+              --value "$timestamp" || Ret=$?
+
+# Send the duration of the last backup run in seconds
+zabbix_sender --config /etc/zabbix/zabbix_agentd.conf \
+              --host "${zabbixHostName}" \
+              --key 'rabe.rabe-backup.run.duration[]' \
+              --value "$duration" || Ret=$?
+
+return $Ret;
+}
+
 # trap keyboard interrupt (control-c)
 trap control_c SIGINT
 
@@ -47,6 +84,9 @@ echo "$(date): Rsync backup of VMS starting."
 
 for i in "${VMS[@]}"
 do
+  startTime="$(date +%s)";
+  vm_name="$i.***REMOVED***";
+  errors=0;
   ssh-keyscan $i.***REMOVED*** >> ~/.ssh/known_hosts 2>/dev/null
   for j in $BACKUP_DIRS
   do
@@ -79,16 +119,23 @@ do
   elif [ $ret -eq "12" ]
   then
     echo "ERROR: Permission denied on $syncdir."
+    let "errrors++";
   elif [ $ret -eq "255" ]
   then
     echo "ERROR: Host $i.***REMOVED*** is not online or could not be resolved."
+    let "errrors++";
   else
    echo "ERROR: Unknown error ($ret) occured when trying to rsync $syncdir."
+   let "errrors++";
   fi
   done
-  cd ..
-done
 
+if [ $errors -eq 0 ];
+then
+  backup_success $vm_name $startTime
+fi
+
+done
 echo "$(date): Rsync backup finished."
 
 mv ~/.ssh/known_hosts.bkp ~/.ssh/known_hosts
