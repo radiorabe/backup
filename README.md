@@ -29,6 +29,14 @@ As root:
 
 	/home/backup/backup/backup-fs-vms.sh
 
+## Crontab
+
+As root:
+
+	crontab -e
+	PATH="/sbin:/bin:/usr/sbin:/usr/bin"
+	0 4 * * * /home/backup/backup/backup-fs-vms.sh
+
 ## RPM Packaging
 
 Since it is not finished yet, I parked packaging files (-see
