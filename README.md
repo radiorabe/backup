@@ -16,6 +16,12 @@ Radio RaBe Backup process and automation scripts.
   /var/spool /var/backup` mit rsync gesichert.
 * Das Script wird von cron oder systemd timer getriggert.
 
+## Scripte
+
+* backup-fs-vms.sh: Sichert die VMs der neuen Infrastruktur
+* backup-userdata.sh: Sichert die Nutzdaten (Shares)
+* backup-appliances.sh: Sichert Gateway, Firewall und Access Points.
+
 ## Setup
 
 As root on the backup server:
