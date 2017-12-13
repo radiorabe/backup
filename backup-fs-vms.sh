@@ -23,6 +23,7 @@
 PN="`basename "$0" .sh`"
 LOGFILE="/var/log/${PN}.log"  # rsync logfile.
 BACKUP_DIRS="etc home root usr/local var/log var/local var/spool var/backup"
+RSH_CMD="/usr/bin/ssh -i /home/backup/.ssh/id_rsa -l backup"
 BACKUP_DST_DIR=/srv/backup/remote-backup
 VMS=("vm-0001" "vm-0002" "vm-0003" "vm-0005" "vm-0006" "vm-0007" "vm-0008" "vm-0009" "vm-0010" "vm-0011" "vm-0012" "vm-0013" "vm-0014" "vm-0015" "vm-0016" "vm-0017" "***REMOVED***" "vm-0019" "vm-0020" "vm-0021")
 
@@ -106,7 +107,7 @@ do
           --xattrs \
           --devices \
           --specials \
-          --rsh="/usr/bin/ssh -i /home/backup/.ssh/id_rsa -l backup" \
+          --rsh="$RSH_CMD" \
           --delete \
           --numeric-ids \
           --timeout=120 \
