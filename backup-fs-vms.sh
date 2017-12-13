@@ -25,7 +25,27 @@ LOGFILE="/var/log/${PN}.log"  # rsync logfile.
 BACKUP_DIRS="etc home root usr/local var/log var/local var/spool var/backup"
 RSH_CMD="/usr/bin/ssh -i /home/backup/.ssh/id_rsa -l backup"
 BACKUP_DST_DIR=/srv/backup/remote-backup
-VMS=("vm-0001" "vm-0002" "vm-0003" "vm-0005" "vm-0006" "vm-0007" "vm-0008" "vm-0009" "vm-0010" "vm-0011" "vm-0012" "vm-0013" "vm-0014" "vm-0015" "vm-0016" "vm-0017" "vm-0018" "vm-0019" "vm-0020" "vm-0021")
+
+function get_vm_list()
+{
+
+local ovirt_url="https://ovirt-engine.admin.int.rabe.ch/ovirt-engine/api"
+local ovirt_user="admin@internal"
+local ovirt_password=`cat /home/backup/.ovirt_password`
+
+local tmpVMS=`curl \
+  --insecure \
+  --header "Accept: application/xml" \
+  --user "${ovirt_user}:${ovirt_password}" \
+  "${ovirt_url}/vms" \
+  | sed -n  's/<name>\(vm-.*\)<\/name>/\1/p' | tr -d '\n'`
+
+# Split string into an array in Bash
+# https://stackoverflow.com/questions/10586153/split-string-into-an-array-in-bash
+read -r -a VMS <<< $tmpVMS
+#Workaround
+VMS+=("vm-0002" "vm-0003")
+} # get_vm_list()
 
 function backup_success()
 {
@@ -82,9 +102,12 @@ exit 1
 
 # Main -------------------------------------------------------------------------
 
+
 # Sent output to logfile
 exec 1>${LOGFILE}
 exec 2>&1
+
+get_vm_list
 
 mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bkp
 
