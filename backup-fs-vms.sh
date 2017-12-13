@@ -33,16 +33,24 @@ local ovirt_url="https://***REMOVED***/ovirt-engine/api"
 local ovirt_user="admin@internal"
 local ovirt_password=`cat /home/backup/.ovirt_password`
 
-local tmpVMS=`curl \
+local tmpVMS=`mktemp`
+
+if ! curl \
   --insecure \
   --header "Accept: application/xml" \
   --user "${ovirt_user}:${ovirt_password}" \
   "${ovirt_url}/vms" \
-  | sed -n  's/<name>\(vm-.*\)<\/name>/\1/p' | tr -d '\n'`
+  | sed -n  's/<name>\(vm-.*\)<\/name>/\1/p' | tr -d '\n' >$tmpVMS;
+then
+  Ret=$?
+  echo "$(date) ERROR: Cannot fetch list of VMs via ovirt api! Returnvalue=$Ret"
+  exit $Ret
+fi
 
 # Split string into an array in Bash
 # https://stackoverflow.com/questions/10586153/split-string-into-an-array-in-bash
 read -r -a VMS <<< $tmpVMS
+rm $tmpVMS
 #Workaround
 VMS+=("vm-0002" "vm-0003")
 } # get_vm_list()
