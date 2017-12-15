@@ -43,8 +43,6 @@ local tmpVMS=`curl \
 # Split string into an array in Bash
 # https://stackoverflow.com/questions/10586153/split-string-into-an-array-in-bash
 read -r -a VMS <<< $tmpVMS
-#Workaround
-VMS+=("vm-0002" "vm-0003")
 } # get_vm_list()
 
 function backup_success()
