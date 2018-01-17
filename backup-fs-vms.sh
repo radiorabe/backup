@@ -22,7 +22,7 @@
 #
 PN="`basename "$0" .sh`"
 LOGFILE="/var/log/${PN}.log"  # rsync logfile.
-BACKUP_DIRS="etc home root usr/local var/log var/local var/spool var/backup"
+BACKUP_DIRS="etc home root usr/local var/log var/local var/spool var/backup var/backups"
 RSH_CMD="/usr/bin/ssh -i /home/backup/.ssh/id_rsa -l backup"
 BACKUP_DST_DIR=/srv/backup/remote-backup
 
