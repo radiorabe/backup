@@ -132,11 +132,11 @@ mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bkp
 
 echo "$(date): Rsync backup of VMS starting."
 
+errors=0;
 for i in "${VMS[@]}"
 do
   startTime="$(date +%s)";
   vm_name="$i.***REMOVED***";
-  errors=0;
   ssh-keyscan $i.***REMOVED*** >> ~/.ssh/known_hosts 2>/dev/null
   for j in $BACKUP_DIRS
   do
