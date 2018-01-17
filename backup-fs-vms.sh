@@ -167,22 +167,22 @@ do
   ret=$?
   if [ $ret -eq "0" ]
   then
-    echo "Sync of $syncdir to ${BACKUP_DST_DIR}/${i} successfull!"
+    echo "$(date) Sync of $syncdir to ${BACKUP_DST_DIR}/${i} successfull!"
   elif [ $ret -eq "23" ]
   then
-    echo "INFO: $syncdir does not exist."
+    echo "$(date) INFO: $syncdir does not exist."
   elif [ $ret -eq "12" ]
   then
-    echo "ERROR: Permission denied on $syncdir."
+    echo "$(date) ERROR: Permission denied on $syncdir."
     let "errors_vm++";
     let "errors_all++";
   elif [ $ret -eq "255" ]
   then
-    echo "ERROR: Host $i.vm-admin.int.rabe.ch is not online or could not be resolved."
+    echo "$(date) ERROR: Host $i.vm-admin.int.rabe.ch is not online or could not be resolved."
     let "errors_vm++";
     let "errors_all++";
   else
-   echo "ERROR: Unknown error ($ret) occured when trying to rsync $syncdir."
+   echo "$(date) ERROR: Unknown error ($ret) occured when trying to rsync $syncdir."
    let "errors_vm++";
    let "errors_all++";
   fi
@@ -191,7 +191,10 @@ do
 if [ $errors_vm -eq 0 ];
 then
   vm_name_zabbix=$(ssh -i ${SSH_KEY} ${SSH_USER}@${vm_name} hostname | grep rabe.ch)
-  backup_success $vm_name_zabbix $startTime
+  if ! backup_success $vm_name_zabbix $startTime;
+  then
+      echo "$(date) ERROR: backup_success: Could not send statuses for ${vm_name_zabbix} to zabbix"
+  fi
 fi
 
 done
@@ -205,9 +208,9 @@ else
 fi
 
 mv ~/.ssh/known_hosts.bkp ~/.ssh/known_hosts
-echo "$(date): Script finished; $errors errors occured."
+echo "$(date): Script finished; $errors_all errors occured."
 
-if [ $errors -gt 0 ];
+if [ $errors_all -gt 0 ];
 then
   exit 1
 fi
