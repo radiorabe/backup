@@ -23,7 +23,9 @@
 PN="`basename "$0" .sh`"
 LOGFILE="/var/log/${PN}.log"  # rsync logfile.
 BACKUP_DIRS="etc home root usr/local var/log var/local var/spool var/backup var/backups"
-RSH_CMD="/usr/bin/ssh -i /home/backup/.ssh/id_rsa -l backup"
+SSH_USER="backup"
+SSH_KEY="/home/backup/.ssh/id_rsa"
+RSH_CMD="/usr/bin/ssh -i ${SSH_KEY} -l ${SSH_USER}"
 BACKUP_DST_DIR=/srv/backup/remote-backup
 
 function get_vm_list()
@@ -56,6 +58,7 @@ rm $tmpVMS
 
 function backup_success()
 {
+
 
 zabbixHostName=$(echo $1 | sed 's/vm-admin/service/g');
 startTime=$2;
@@ -132,11 +135,12 @@ mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bkp
 
 echo "$(date): Rsync backup of VMS starting."
 
-errors=0;
+errors_all=0;
 for i in "${VMS[@]}"
 do
   startTime="$(date +%s)";
   vm_name="$i.vm-admin.int.rabe.ch";
+  errors_vm=0;
   ssh-keyscan $i.vm-admin.int.rabe.ch >> ~/.ssh/known_hosts 2>/dev/null
   for j in $BACKUP_DIRS
   do
@@ -169,18 +173,21 @@ do
   elif [ $ret -eq "12" ]
   then
     echo "ERROR: Permission denied on $syncdir."
-    let "errors++";
+    let "errors_vm++";
+    let "errors_all++";
   elif [ $ret -eq "255" ]
   then
     echo "ERROR: Host $i.vm-admin.int.rabe.ch is not online or could not be resolved."
-    let "errors++";
+    let "errors_vm++";
+    let "errors_all++";
   else
    echo "ERROR: Unknown error ($ret) occured when trying to rsync $syncdir."
-   let "errors++";
+   let "errors_vm++";
+   let "errors_all++";
   fi
   done
 
-if [ $errors -eq 0 ];
+if [ $errors_vm -eq 0 ];
 then
   backup_success $vm_name $startTime
 fi
