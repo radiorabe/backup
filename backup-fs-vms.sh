@@ -60,7 +60,8 @@ function backup_success()
 {
 
 
-zabbixHostName=$(echo $1 | sed 's/vm-admin/service/g');
+#zabbixHostName=$(echo $1 | sed 's/vm-admin/service/g');
+zabbixHostName=$1
 startTime=$2;
 
 if [ -z $startTime ];
@@ -189,7 +190,8 @@ do
 
 if [ $errors_vm -eq 0 ];
 then
-  backup_success $vm_name $startTime
+  vm_name_zabbix=$(ssh -i ${SSH_KEY} ${SSH_USER}@${vm_name} hostname | grep rabe.ch)
+  backup_success $vm_name_zabbix $startTime
 fi
 
 done
