@@ -68,10 +68,13 @@ then
   return 1
 fi
 
+zabbixHostNameTMP=$( ssh -i ${SSH_KEY} ${SSH_USER}@${vm_name} \
     grep --perl-regexp \
          --only-matching \
-         '(?<=^Hostname=).*' \
+         '^Hostname=.*' \
     /etc/zabbix/zabbix_agentd.conf )
+zabbixHostName=$(echo $zabbixHostNameTMP | sed 's/Hostname=//g');
+unset zabbixHostNameTMP
 
 if [ -z $zabbixHostName ];
 then
