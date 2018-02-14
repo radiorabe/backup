@@ -60,9 +60,7 @@ function backup_success()
 {
 
 
-#zabbixHostName=$(echo $1 | sed 's/vm-admin/service/g');
-zabbixHostName=$1
-startTime=$2;
+startTime=$1;
 
 if [ -z $startTime ];
 then
@@ -70,9 +68,14 @@ then
   return 1
 fi
 
+    grep --perl-regexp \
+         --only-matching \
+         '(?<=^Hostname=).*' \
+    /etc/zabbix/zabbix_agentd.conf )
+
 if [ -z $zabbixHostName ];
 then
-  echo "$(date) WARNING: habbixHostName for success message not set!"
+  echo "$(date) WARNING: Could not recognize zabbix hostname!"
   return 1
 fi
 
@@ -190,10 +193,9 @@ do
 
 if [ $errors_vm -eq 0 ];
 then
-  vm_name_zabbix=$(ssh -i ${SSH_KEY} ${SSH_USER}@${vm_name} hostname | grep rabe.ch)
-  if ! backup_success $vm_name_zabbix $startTime;
+  if ! backup_success $startTime;
   then
-      echo "$(date) ERROR: backup_success: Could not send statuses for ${vm_name_zabbix} to zabbix"
+      echo "$(date) ERROR: backup_success: Could not send statuses for ${zabbixHostName} to zabbix"
   fi
 fi
 
