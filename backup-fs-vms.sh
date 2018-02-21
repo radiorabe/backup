@@ -138,7 +138,7 @@ mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bkp
 
 echo "$(date): Rsync backup of VMS starting."
 
-errors_all=0;
+errors_vm_all=0;
 for i in "${VMS[@]}"
 do
   startTime="$(date +%s)";
@@ -177,16 +177,13 @@ do
   then
     echo "$(date) ERROR: Permission denied on $syncdir."
     let "errors_vm++";
-    let "errors_all++";
   elif [ $ret -eq "255" ]
   then
     echo "$(date) ERROR: Host $i.vm-admin.int.rabe.ch is not online or could not be resolved."
     let "errors_vm++";
-    let "errors_all++";
   else
    echo "$(date) ERROR: Unknown error ($ret) occured when trying to rsync $syncdir."
    let "errors_vm++";
-   let "errors_all++";
   fi
   done
 
@@ -196,6 +193,9 @@ then
   then
       echo "$(date) ERROR: backup_success: Could not send statuses for ${zabbixHostName} to zabbix"
   fi
+else
+  let "errors_vm_all++";
+  echo "$(date) WARNING: $vm_name had problems during the backup job."
 fi
 
 done
@@ -209,9 +209,9 @@ else
 fi
 
 mv ~/.ssh/known_hosts.bkp ~/.ssh/known_hosts
-echo "$(date): Script finished; $errors_all errors occured."
+echo "$(date): Script finished; $errors_vm_all VMs had problems during the backup job."
 
-if [ $errors_all -gt 0 ];
+if [ $errors_vm_all -gt 0 ];
 then
   exit 1
 fi
