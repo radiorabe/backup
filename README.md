@@ -4,23 +4,23 @@ Radio RaBe Backup process and automation scripts.
 
 ## System Context
 
-* Das **Backupper Script** holt die Daten vom Zielsystem (vm oder share) ab.
-* Die Daten werden auf dem **BTRFS Filesystem** revisionssicher abgelegt.
-* Auf dem Backup Server wird die Möglichkeit zum **Self-Restore** mittels NFS
-  oder Samba Service angeboten.
+* The **Backupper Script** collects the data from the target system (vm or share).
+* The data is stored on the **BTRFS file system** in a revision-proof way.
+* The backup server offers the possibility of **self-restore** via NFS or Samba service.
+
 
 ## Concepts
 
-* Das Backup Script liegt auf dem Backup-Server.
-* Es werden die Pfade `/etc /home /root /usr/local /var/log /var/local
-  /var/spool /var/backup` mit rsync gesichert.
-* Das Script wird von cron oder systemd timer getriggert.
+* The backup script is located on the backup server.
+* The following directories are included in the backup (via rsync):
+  `/etc /home /home /root /usr/local /var/log /var/local /var/spool /var/backup` with rsync.
+* The script is triggered by cron or systemd timer.
 
 ## Scripte
 
-* backup-fs-vms.sh: Sichert die VMs der neuen Infrastruktur
-* backup-userdata.sh: Sichert die Nutzdaten (Shares)
-* backup-appliances.sh: Sichert Gateway, Firewall und Access Points.
+* **backup-fs-vms.sh**: Backup the VMs of the new infrastructure
+* **backup-userdata.sh**: Backup user data (shares)
+* **backup-appliances.sh**: Backup Secures gateway, firewall and access points.
 
 ## Setup
 
