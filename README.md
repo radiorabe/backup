@@ -12,7 +12,7 @@ Radio RaBe Backup process and automation scripts.
 ## Concepts
 
 * The backup script is located on the backup server.
-* The following directories are included in the backup (via rsync):
+* The following directories are included in the backup
   `/etc /home /home /root /usr/local /var/log /var/local /var/spool /var/backup` with rsync.
 * The script is triggered by cron or systemd timer.
 
