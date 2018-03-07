@@ -21,7 +21,7 @@
 # Constants --------------------------------------------------------------------
 #
 PN="`basename "$0" .sh`"
-LOGFILE="/var/log/${PN}.log"  # rsync logfile.
+LOGFILE="/var/log/${PN}.log"  # logfile.
 BACKUP_DIRS="cf/conf/"
 SSH_USER="backup"
 SSH_KEY="/home/backup/.ssh/id_rsa"
@@ -125,7 +125,7 @@ do
   then
     echo "$(date) Backup of $syncdir to ${BACKUP_DST_DIR}/${i} successfull!"
   else
-   echo "$(date) ERROR: Unknown error ($ret) occured when trying to rsync $syncdir."
+   echo "$(date) ERROR: Unknown error ($ret) occured when trying to backup $syncdir."
    let "errors_vm++";
   fi
 done
@@ -142,7 +142,7 @@ else
 fi
 
 done
-echo "$(date): Rsync backup finished."
+echo "$(date): Backup finished."
 
 if btrbk run;
 then
@@ -152,7 +152,7 @@ else
 fi
 
 mv ~/.ssh/known_hosts.bkp ~/.ssh/known_hosts
-echo "$(date): Script finished; $errors_vm_all VMs had problems during the backup job."
+echo "$(date): Script finished; $errors_vm_all appliances had problems during the backup job."
 
 if [ $errors_vm_all -gt 0 ];
 then
