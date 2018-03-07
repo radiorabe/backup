@@ -42,6 +42,7 @@ As root:
 	crontab -e
 	PATH="/sbin:/bin:/usr/sbin:/usr/bin"
 	0 4 * * * /home/backup/backup/backup-fs-vms.sh
+	0 4 * * * /home/backup/backup/backup-appliances.sh
 
 ## RPM Packaging
 
