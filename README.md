@@ -27,6 +27,8 @@ Radio RaBe Backup process and automation scripts.
 As root on the backup server:
 
 	su - backup
+	mkdir .ssh
+	ssh-keygen -t rsa -b 4098 -C "backup@vm-1001" -f ~/.ssh/id_backup
 	git clone https://github.com/radiorabe/backup
 
 ## Usage
@@ -34,6 +36,10 @@ As root on the backup server:
 As root:
 
 	/home/backup/backup/backup-fs-vms.sh
+
+or
+
+	/home/backup/backup/backup-appliances.sh
 
 ## Crontab
 
