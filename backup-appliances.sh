@@ -27,7 +27,7 @@ SSH_USER="backup"
 SSH_KEY="/home/backup/.ssh/id_rsa"
 RSH_CMD="/usr/bin/ssh -i ${SSH_KEY} -l ${SSH_USER}"
 BACKUP_DST_DIR=/srv/backup/remote-backup
-APPLIANCE_LIST+=("gw-001" "gw-002")
+APPLIANCE_LIST+=("gw-001.vm-admin.int.rabe.ch" "gw-002.vm-admin.int.rabe.ch")
 
 function backup_success()
 {
@@ -113,17 +113,19 @@ errors_vm_all=0;
 for i in "${APPLIANCE_LIST[@]}"
 do
   startTime="$(date +%s)";
-  vm_name="$i.vm-admin.int.rabe.ch";
+  vm_name="$i";
   errors_vm=0;
-  ssh-keyscan $i.vm-admin.int.rabe.ch >> ~/.ssh/known_hosts 2>/dev/null
+  ssh-keyscan $vm_name >> ~/.ssh/known_hosts 2>/dev/null
   for j in $BACKUP_DIRS
   do
-  syncdir=$i.vm-admin.int.rabe.ch:/$j
+  syncdir=${vm_name}:/${j}
+  set -x
   scp -qrpi ${SSH_KEY} ${SSH_USER}@${syncdir} ${BACKUP_DST_DIR}/${i}
+  set +x
   ret=$?
   if [ $ret -eq "0" ]
   then
-    echo "$(date) Backup of $syncdir to ${BACKUP_DST_DIR}/${i} successfull!"
+    echo "$(date) SUCCESS: Backup of $syncdir to ${BACKUP_DST_DIR}/${i} successfull!"
   else
    echo "$(date) ERROR: Unknown error ($ret) occured when trying to backup $syncdir."
    let "errors_vm++";
