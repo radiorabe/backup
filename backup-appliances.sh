@@ -27,13 +27,14 @@ SSH_USER="backup"
 SSH_KEY="/home/backup/.ssh/id_rsa"
 RSH_CMD="/usr/bin/ssh -i ${SSH_KEY} -l ${SSH_USER}"
 BACKUP_DST_DIR=/srv/backup/remote-backup
-APPLIANCE_LIST+=("gw-001.vm-admin.int.rabe.ch" "gw-002.vm-admin.int.rabe.ch")
+#APPLIANCE_LIST+=("gw-001.vm-admin.int.rabe.ch" "gw-002.vm-admin.int.rabe.ch" "ap-001.admin.int.rabe.ch")
+APPLIANCE_LIST+=("gw-001.admin.int.rabe.ch" "gw-002.admin.int.rabe.ch" "ap-001.admin.int.rabe.ch")
 
 function backup_success()
 {
 
 
-startTime=$1;
+startTime=$2;
 
 if [ -z $startTime ];
 then
@@ -41,9 +42,7 @@ then
   return 1
 fi
 
-zabbixHostName=$( ssh -i ${SSH_KEY} ${SSH_USER}@${vm_name} \
-    grep -Po "'(?<=^Hostname=).*'" \
-      /etc/zabbix/zabbix_agentd.conf)
+zabbixHostName=$1
 
 if [ -z $zabbixHostName ];
 then
@@ -134,7 +133,7 @@ done
 
 if [ $errors_vm -eq 0 ];
 then
-  if ! backup_success $startTime;
+  if ! backup_success $vm_name $startTime;
   then
       echo "$(date) ERROR: backup_success: Could not send statuses for ${zabbixHostName} to zabbix"
   fi
