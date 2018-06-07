@@ -43,7 +43,7 @@ if ! curl \
   --header "Accept: application/xml" \
   --user "${ovirt_user}:${ovirt_password}" \
   "${ovirt_url}/vms" \
-  | sed -n  's/<name>\(vm-.*\)<\/name>/\1/p' | tr -d '\n' >$tmpVMS;
+  | sed -n 's/<name>\(vm-.\{4\}\)<\/name>/\1/p' | tr -d '\n' >$tmpVMS;
 then
   Ret=$?
   echo "$(date) ERROR: Cannot fetch list of VMs via ovirt api! Returnvalue=$Ret"
