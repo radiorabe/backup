@@ -17,7 +17,6 @@
 # along with radiorabe backup.  If not, see <http://www.gnu.org/licenses/>.
 
 PREFIX		?= /usr
-#PREFIX		?= .
 BINDIR		= $(PREFIX)/local/scripts/backup
 LIBDIR		= $(PREFIX)/lib
 UNITDIR		= $(LIBDIR)/systemd/system
@@ -37,12 +36,21 @@ uninstall:
 	@echo Cleaning up files...
 	rm $(BINDIR)/backup-appliances.sh
 	rm $(BINDIR)/backup-fs-vms.sh
+	rm $(BINDIR)/run-all.sh
+	rm $(UNITDIR)/rabe-backup.service
+	rm $(UNITDIR)/rabe-backup.timer
+	systemctl daemon-reload
 	@echo done.
 
 install-bin:
 	@echo 'installing main scripts...'
 	install -Dm755 backup-appliances.sh "$(BINDIR)/backup-appliances.sh"
 	install -Dm755 backup-fs-vms.sh "$(BINDIR)/backup-fs-vms.sh"
+	install -Dm755 run-all.sh "$(BINDIR)/run-all.sh"
+	@echo 'installing systemd services...'
+	install -Dm644 config/rabe-backup.service "$(UNITDIR)/rabe-backup.service"
+	install -Dm644 config/rabe-backup.timer "$(UNITDIR)/rabe-backup.timer"
+	systemctl daemon-reload
 
 install-man:
 
