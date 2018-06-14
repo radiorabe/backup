@@ -21,34 +21,30 @@ Radio RaBe Backup process and automation scripts.
 * **backup-fs-vms.sh**: Backup the VMs of the new infrastructure
 * **backup-userdata.sh**: Backup user data (shares)
 * **backup-appliances.sh**: Backup Secures gateway, firewall and access points.
+* **run-all.sh**: Wrapper script for systemd.timer which run all three backup scripts.
 
 ## Setup
 
 As root on the backup server:
 
+	git clone https://github.com/radiorabe/backup
+	make install
+
+Create a backup user within a ssh key:
+
 	su - backup
 	mkdir .ssh
 	ssh-keygen -t rsa -b 4098 -C "backup@vm-1001" -f ~/.ssh/id_backup
-	git clone https://github.com/radiorabe/backup
 
 ## Usage
 
 As root:
 
-	/home/backup/backup/backup-fs-vms.sh
+	systemctl start rabe-backup
 
 or
 
-	/home/backup/backup/backup-appliances.sh
-
-## Crontab
-
-As root:
-
-	crontab -e
-	PATH="/sbin:/bin:/usr/sbin:/usr/bin"
-	0 4 * * * /home/backup/backup/backup-fs-vms.sh
-	0 4 * * * /home/backup/backup/backup-appliances.sh
+	/user/local/scripts/backup/run-all.sh
 
 ## RPM Packaging
 
