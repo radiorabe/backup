@@ -3,12 +3,12 @@ Description=Run RaBe Backup Service daily
 
 [Timer]
 # Run once per day at midnight ("*-*-* 00:00:00")
-OnCalendar=*-*-* 4:00:00
+OnCalendar=*-*-* 3:00:00
 
 # Start immediately if last start was missed (ie when machine was down)
 Persistent=true
 # Delay timer randomly to spread out load (centos-7.3 and up only)
-RandomizedDelaySec=30min
+RandomizedDelaySec=60min
 # Do not coalesce with other timers, no need to save power during a backup
 AccuracySec=1us
 # try waking system if possible
