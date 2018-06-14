@@ -51,6 +51,8 @@ install-bin:
 	install -Dm644 config/rabe-backup.service "$(UNITDIR)/rabe-backup.service"
 	install -Dm644 config/rabe-backup.timer "$(UNITDIR)/rabe-backup.timer"
 	systemctl daemon-reload
+	systemctl enable rabe-backup.service
+	systemctl enable rabe-backup.timer
 
 install-man:
 
