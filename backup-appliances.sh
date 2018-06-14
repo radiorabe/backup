@@ -87,23 +87,6 @@ exit 1
 
 # Main -------------------------------------------------------------------------
 
-# When you need an argument that needs a value, you put the ":" right after
-# the argument in the optstring. If your var is just a flag, withou any
-# additional argument, just leave the var, without the ":" following it.
-#
-# please keep letters in alphabetic order
-#
-while getopts "q" OPTION
-do
-  case $OPTION in
-    q)
-        # Sent output to logfile
-        exec 1>${LOGFILE}
-        exec 2>&1
-      ;;
-  esac
-done
-
 mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bkp
 
 echo "$(date): Appliance backup starting."
