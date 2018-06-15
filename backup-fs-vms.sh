@@ -29,6 +29,8 @@ RSH_CMD="/usr/bin/ssh -i ${SSH_KEY} -l ${SSH_USER}"
 BACKUP_DST_DIR=/srv/backup/remote-backup
 RSYNC_OPTS="--verbose --archive --recursive --acls --devices --specials --delete --numeric-ids --timeout=120 --stats --human-readable --progress --inplace --one-file-system" 
 
+
+
 function get_vm_list()
 {
 
@@ -115,6 +117,14 @@ exit 1
 }
 
 # Main -------------------------------------------------------------------------
+
+# Configure rsync --bwlimit if backup is executed during the day
+BW_LIMIT_HOUR="`date +%H`"
+if [ "$BW_LIMIT_HOUR" -ge 7 -a "$BW_LIMIT_HOUR" -le 23 ];
+then
+    # Limit network usage to 1024 KiB / sec during the day
+    RSYNC_OPTS="$RSYNC_OPTS --bwlimit=1024"
+fi
 
 get_vm_list
 
