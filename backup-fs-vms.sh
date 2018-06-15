@@ -122,7 +122,7 @@ exit 1
 BW_LIMIT_HOUR="`date +%H`"
 if [ "$BW_LIMIT_HOUR" -ge 7 -a "$BW_LIMIT_HOUR" -le 23 ];
 then
-    # Limit network usage to 1024 KiB / sec during the day
+    echo "Starting backup with limited bandwidth - 1024 KiB/s"
     RSYNC_OPTS="$RSYNC_OPTS --bwlimit=1024"
 fi
 
