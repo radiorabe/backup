@@ -27,7 +27,7 @@ SSH_USER="backup"
 SSH_KEY="/home/backup/.ssh/id_rsa"
 RSH_CMD="/usr/bin/ssh -i ${SSH_KEY} -l ${SSH_USER}"
 BACKUP_DST_DIR=/srv/backup/remote-backup
-RSYNC_OPTS="--verbose --archive --recursive --acls --xattrs --devices --specials --delete --numeric-ids --timeout=120 --stats --human-readable --progress --inplace --one-file-system" 
+RSYNC_OPTS="--verbose --archive --recursive --acls --devices --specials --delete --numeric-ids --timeout=120 --stats --human-readable --progress --inplace --one-file-system" 
 
 function get_vm_list()
 {
@@ -132,10 +132,24 @@ do
   for j in $BACKUP_DIRS
   do
   syncdir=$i.vm-admin.int.rabe.ch:/$j
-  rsync --rsync-path="sudo /bin/rsync" \
-	--rsh="${RSH_CMD}" \
-	${RSYNC_OPTS} \
-        $syncdir ${BACKUP_DST_DIR}/${i}
+
+  if [ $i != "vm-0018" ];
+  then
+    rsync --rsync-path="sudo /bin/rsync" \
+      --rsh="${RSH_CMD}" \
+      ${RSYNC_OPTS} \
+      --xattrs \
+      $syncdir ${BACKUP_DST_DIR}/${i}
+
+  else
+
+    # vm-0018 = rabadub-01: Does not support --xattrs
+    rsync --rsync-path="sudo /bin/rsync" \
+      --rsh="${RSH_CMD}" \
+      ${RSYNC_OPTS} \
+      $syncdir ${BACKUP_DST_DIR}/${i}
+
+  fi
   ret=$?
   if [ $ret -eq "0" ]
   then
