@@ -30,6 +30,7 @@ test:
 	@echo Testing script syntax...
 	bash -n backup-appliances.sh
 	bash -n backup-fs-vms.sh
+	bash -n run-all.sh
 	@echo done.
 
 uninstall:
