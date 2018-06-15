@@ -49,7 +49,7 @@ if ! curl \
   | sed -n 's/<name>\(vm-.\{4\}\)<\/name>/\1/p' | tr -d '\n' >$tmpVMS;
 then
   Ret=$?
-  echo "$(date) ERROR: Cannot fetch list of VMs via ovirt api! Returnvalue=$Ret"
+  echo "ERROR: Cannot fetch list of VMs via ovirt api! Returnvalue=$Ret"
   exit $Ret
 fi
 
@@ -67,7 +67,7 @@ startTime=$1;
 
 if [ -z $startTime ];
 then
-  echo "$(date) WARNING: Backup start time was not set!"
+  echo "WARNING: Backup start time was not set!"
   return 1
 fi
 
@@ -77,7 +77,7 @@ zabbixHostName=$( ssh -i ${SSH_KEY} ${SSH_USER}@${vm_name} \
 
 if [ -z $zabbixHostName ];
 then
-  echo "$(date) WARNING: Could not recognize zabbix hostname!"
+  echo "WARNING: Could not recognize zabbix hostname!"
   return 1
 fi
 
@@ -112,7 +112,7 @@ control_c()
 # Output     :  logging
 #
 {
-echo "$(date) CTRL-C catched"
+echo "rabe-backup CTRL-C catched"
 exit 1
 }
 
@@ -130,7 +130,7 @@ get_vm_list
 
 mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bkp
 
-echo "$(date): Rsync backup of VMS starting."
+echo "rabe-backup rsync backup of VMS starting."
 
 errors_vm_all=0;
 for i in "${VMS[@]}"
@@ -163,20 +163,20 @@ do
   ret=$?
   if [ $ret -eq "0" ]
   then
-    echo "$(date) Sync of $syncdir to ${BACKUP_DST_DIR}/${i} successfull!"
+    echo "rabe-backup Sync of $syncdir to ${BACKUP_DST_DIR}/${i} successfull!"
   elif [ $ret -eq "23" ]
   then
-    echo "$(date) INFO: $syncdir does not exist."
+    echo "rabe-backup INFO: $syncdir does not exist."
   elif [ $ret -eq "12" ]
   then
-    echo "$(date) ERROR: Permission denied on $syncdir."
+    echo "rabe-backup ERROR: Permission denied on $syncdir."
     let "errors_vm++";
   elif [ $ret -eq "255" ]
   then
-    echo "$(date) ERROR: Host $i.***REMOVED*** is not online or could not be resolved."
+    echo "rabe-backup ERROR: Host $i.***REMOVED*** is not online or could not be resolved."
     let "errors_vm++";
   else
-   echo "$(date) ERROR: Unknown error ($ret) occured when trying to rsync $syncdir."
+   echo "rabe-backup ERROR: Unknown error ($ret) occured when trying to rsync $syncdir."
    let "errors_vm++";
   fi
   done
@@ -185,17 +185,17 @@ if [ $errors_vm -eq 0 ];
 then
   if ! backup_success $startTime;
   then
-      echo "$(date) ERROR: backup_success: Could not send statuses for ${zabbixHostName} to zabbix"
+      echo "rabe-backup ERROR: backup_success: Could not send statuses for ${zabbixHostName} to zabbix"
   fi
 else
   let "errors_vm_all++";
-  echo "$(date) WARNING: $vm_name had problems during the backup job."
+  echo "rabe-backup WARNING: $vm_name had problems during the backup job."
 fi
 
 done
 
 mv ~/.ssh/known_hosts.bkp ~/.ssh/known_hosts
-echo "$(date): Script finished; $errors_vm_all VMs had problems during the backup job."
+echo "rabe-backup: Script finished; $errors_vm_all VMs had problems during the backup job."
 
 if [ $errors_vm_all -gt 0 ];
 then
