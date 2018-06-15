@@ -6,9 +6,14 @@ RetVal=0
 echo "rabe-backup started"
 
 backup-appliances.sh || RetVal=$?
-backup-fs-vms.sh || RetVal=$?
-btrbk run || RetVal=$?
+echo "backup-appliances.sh finished; status=${RetVal}"
 
-echo "rabe-backup finished; script returnvalue=${RetVal}"
+backup-fs-vms.sh || RetVal=$?
+echo "backup-fs-vms.sh finished; status=${RetVal}"
+
+btrbk run || RetVal=$?
+echo "btrbk run finished; status=${RetVal}"
+
+echo "rabe-backup finished; script exitstatus=${RetVal}"
 
 exit $RetVal
