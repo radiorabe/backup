@@ -38,7 +38,7 @@ startTime=$2;
 
 if [ -z $startTime ];
 then
-  echo "$(date) WARNING: Backup start time was not set!"
+  echo "rabe-backup WARNING: Backup start time was not set!"
   return 1
 fi
 
@@ -46,7 +46,7 @@ zabbixHostName=$1
 
 if [ -z $zabbixHostName ];
 then
-  echo "$(date) WARNING: Could not recognize zabbix hostname!"
+  echo "rabe-backup WARNING: Could not recognize zabbix hostname!"
   return 1
 fi
 
@@ -81,7 +81,7 @@ control_c()
 # Output     :  logging
 #
 {
-echo "$(date) CTRL-C catched"
+echo "rabe-backup CTRL-C catched"
 exit 1
 }
 
@@ -89,7 +89,7 @@ exit 1
 
 mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bkp
 
-echo "$(date): Appliance backup starting."
+echo "rabe-backup: Appliance backup starting."
 
 errors_vm_all=0;
 for i in "${APPLIANCE_LIST[@]}"
@@ -107,9 +107,9 @@ do
   ret=$?
   if [ $ret -eq "0" ]
   then
-    echo "$(date) SUCCESS: Backup of $syncdir to ${BACKUP_DST_DIR}/${i} successfull!"
+    echo "rabe-backup SUCCESS: Backup of $syncdir to ${BACKUP_DST_DIR}/${i} successfull!"
   else
-   echo "$(date) ERROR: Unknown error ($ret) occured when trying to backup $syncdir."
+   echo "rabe-backup ERROR: Unknown error ($ret) occured when trying to backup $syncdir."
    let "errors_vm++";
   fi
 done
@@ -118,17 +118,17 @@ if [ $errors_vm -eq 0 ];
 then
   if ! backup_success $vm_name $startTime;
   then
-      echo "$(date) ERROR: backup_success: Could not send statuses for ${zabbixHostName} to zabbix"
+      echo "rabe-backup ERROR: backup_success: Could not send statuses for ${zabbixHostName} to zabbix"
   fi
 else
   let "errors_vm_all++";
-  echo "$(date) WARNING: $vm_name had problems during the backup job."
+  echo "rabe-backup WARNING: $vm_name had problems during the backup job."
 fi
 
 done
 
 mv ~/.ssh/known_hosts.bkp ~/.ssh/known_hosts
-echo "$(date): Script finished; $errors_vm_all appliances had problems during the backup job."
+echo "rabe-backup: Script finished; $errors_vm_all appliances had problems during the backup job."
 
 if [ $errors_vm_all -gt 0 ];
 then
