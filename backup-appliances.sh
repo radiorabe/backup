@@ -126,14 +126,6 @@ else
 fi
 
 done
-echo "$(date): Backup finished."
-
-if btrbk run;
-then
-  echo "$(date): btrfs snapshot (btrbk) finished."
-else
-  let "errors++";
-fi
 
 mv ~/.ssh/known_hosts.bkp ~/.ssh/known_hosts
 echo "$(date): Script finished; $errors_vm_all appliances had problems during the backup job."
