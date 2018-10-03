@@ -21,6 +21,7 @@ Radio RaBe Backup process and automation scripts.
 * **backup-fs-vms.sh**: Backup the VMs of the new infrastructure
 * **backup-userdata.sh**: Backup user data (shares)
 * **backup-appliances.sh**: Backup Secures gateway, firewall and access points.
+* **backup-physical-servers.sh**: Backup the virtualization hosts
 * **run-all.sh**: Wrapper script for systemd.timer which run all three backup scripts.
 
 ## Setup

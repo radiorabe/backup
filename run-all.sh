@@ -11,6 +11,9 @@ echo "backup-appliances.sh finished; status=${RetVal}"
 backup-fs-vms.sh || RetVal=$?
 echo "backup-fs-vms.sh finished; status=${RetVal}"
 
+backup-physical-servers.sh || RetVal=$?
+echo "backup-physical-servers.sh finished; status=${RetVal}"
+
 btrbk run || RetVal=$?
 echo "btrbk run finished; status=${RetVal}"
 
