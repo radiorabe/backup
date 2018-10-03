@@ -22,11 +22,11 @@
 #
 BACKUP_SRC_HOST="***REMOVED***.***REMOVED***"
 BACKUP_SRC_DIRS=(
-    '***REMOVED***'
-    '/vservers/hq.rabe.ch/samba-01/var/samba/music_archive'
-    '***REMOVED***'
-    '***REMOVED***'
-    '***REMOVED***'
+    '***REMOVED***/'
+    '/vservers/hq.rabe.ch/samba-01/var/samba/music_archive/'
+    '***REMOVED***/'
+    '***REMOVED***/'
+    '***REMOVED***/'
     )
 BACKUP_DST_DIRS=(
     '***REMOVED***'
@@ -108,8 +108,8 @@ exit 1
 BW_LIMIT_HOUR="`date +%H`"
 if [ "$BW_LIMIT_HOUR" -ge 7 -a "$BW_LIMIT_HOUR" -le 23 ];
 then
-    echo "Starting backup with limited bandwidth - 1024 KiB/s"
-    RSYNC_OPTS="$RSYNC_OPTS --bwlimit=1024"
+    echo "Starting backup with limited bandwidth - 100 MBit/s"
+    RSYNC_OPTS="$RSYNC_OPTS --bwlimit=10240"
 fi
 
 mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bkp
@@ -134,7 +134,9 @@ then
 fi
 
 set -x
-rsync -n --rsync-path="sudo /bin/rsync" \
+rsync \
+  --progress \
+  --rsync-path="sudo /bin/rsync" \
   --rsh="${RSH_CMD}" \
   ${RSYNC_OPTS} \
   ${syncdir} ${BACKUP_DST_DIRS[i]}
