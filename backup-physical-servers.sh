@@ -94,8 +94,8 @@ exit 1
 BW_LIMIT_HOUR="`date +%H`"
 if [ "$BW_LIMIT_HOUR" -ge 7 -a "$BW_LIMIT_HOUR" -le 23 ];
 then
-    echo "Starting backup with limited bandwidth - 1024 KiB/s"
-    RSYNC_OPTS="$RSYNC_OPTS --bwlimit=1024"
+    echo "Starting backup with limited bandwidth - 100 MBit/s"
+    RSYNC_OPTS="$RSYNC_OPTS --bwlimit=10240"
 fi
 
 mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bkp
