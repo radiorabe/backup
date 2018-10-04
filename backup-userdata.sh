@@ -179,7 +179,7 @@ fi
 mv ~/.ssh/known_hosts.bkp ~/.ssh/known_hosts
 echo "rabe-backup: Script finished; $errors occured during the backup job."
 
-if [ $errors_vm_all -gt 0 ];
+if [ $errors -gt 0 ];
 then
   exit 1
 fi
