@@ -23,14 +23,16 @@
 BACKUP_SRC_HOST="vm-0018.vm-admin.int.rabe.ch"
 BACKUP_SRC_DIRS=(
     '/vservers/hq.rabe.ch/samba-01/home/'
-    '/vservers/hq.rabe.ch/samba-01/var/samba/music_archive/'
+    '/vservers/hq.rabe.ch/samba-01/var/samba/music_archive/mp3'
+    '/vservers/hq.rabe.ch/samba-01/var/samba/music_archive/ra'
     '/vservers/hq.rabe.ch/samba-01/music/'
     '/vservers/hq.rabe.ch/samba-01/shares/'
     '/vservers/hq.rabe.ch/samba-01/transfer/'
     )
 BACKUP_DST_DIRS=(
     '/srv/backup/homes'
-    '/srv/backup/music_archive'
+    '/srv/backup/music_archive/mp3'
+    '/srv/backup/music_archive/ra'
     '/srv/backup/music'
     '/srv/backup/shares'
     '/srv/backup/transfer'
