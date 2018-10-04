@@ -23,14 +23,16 @@
 BACKUP_SRC_HOST="***REMOVED***.***REMOVED***"
 BACKUP_SRC_DIRS=(
     '***REMOVED***/'
-    '/vservers/hq.rabe.ch/samba-01/var/samba/music_archive/'
+    '/vservers/hq.rabe.ch/samba-01/var/samba/music_archive/mp3'
+    '/vservers/hq.rabe.ch/samba-01/var/samba/music_archive/ra'
     '***REMOVED***/'
     '***REMOVED***/'
     '***REMOVED***/'
     )
 BACKUP_DST_DIRS=(
     '***REMOVED***'
-    '***REMOVED***_archive'
+    '***REMOVED***_archive/mp3'
+    '***REMOVED***_archive/ra'
     '***REMOVED***'
     '***REMOVED***'
     '***REMOVED***'
