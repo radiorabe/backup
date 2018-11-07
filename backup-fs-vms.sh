@@ -40,12 +40,14 @@ local ovirt_password=`cat /home/backup/.ovirt_password`
 
 local tmpVMS=`mktemp`
 
+# filter result by only running VMs
+# http://ovirt.github.io/ovirt-engine-api-model/master/#services/vms/methods/list
 if ! curl \
   -s \
   --insecure \
   --header "Accept: application/xml" \
   --user "${ovirt_user}:${ovirt_password}" \
-  "${ovirt_url}/vms" \
+  "${ovirt_url}/vms?search=status%3Dup" \
   | sed -n 's/<name>\(vm-.\{4\}\)<\/name>/\1/p' | tr -d '\n' >$tmpVMS;
 then
   Ret=$?
