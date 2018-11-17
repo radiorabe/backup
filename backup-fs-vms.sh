@@ -152,13 +152,20 @@ backup_custom_dir() {
 
   # fetch include and exclude files
   local includes=$(cat_remote_file "${vm}" "${REMOTE_INCLUDE}")
-  # local excludes=$(cat_remote_file "${vm}" "${REMOTE_EXCLUDE}")
+  local excludes=$(cat_remote_file "${vm}" "${REMOTE_EXCLUDE}")
+
+  # `--relative` is required to exclude absolute paths
+  # https://superuser.com/a/625231
+  local exclude_opts="--relative"
+  for exclude in $excludes; do
+    exclude_opts="${exclude_opts} --exclude $exclude"
+  done
 
   for include in $includes; do
     syncdir="${vm}.***REMOVED***:${include}"
     rsync --rsync-path="sudo /bin/rsync" \
       --rsh="${RSH_CMD}" \
-      ${RSYNC_OPTS} \
+      ${RSYNC_OPTS} ${exclude_opts} \
       "${syncdir}" "${BACKUP_DST_DIR}/${vm}"
     handle_rsync_ret "${?}" "${vm}" "${syncdir}" "${BACKUP_DST_DIR}/${vm}"
   done
