@@ -28,7 +28,8 @@ SSH_KEY="/home/backup/.ssh/id_rsa"
 RSH_CMD="/usr/bin/ssh -i ${SSH_KEY} -l ${SSH_USER}"
 BACKUP_DST_DIR=/srv/backup/remote-backup
 RSYNC_OPTS="--verbose --archive --recursive --acls --devices --specials --delete --numeric-ids --timeout=120 --stats --human-readable --progress --inplace --one-file-system" 
-
+readonly REMOTE_INCLUDE="/etc/rabe-backup.include"
+readonly REMOTE_EXCLUDE="/etc/rabe-backup.exclude"
 
 
 function get_vm_list()
@@ -118,6 +119,51 @@ echo "rabe-backup CTRL-C catched"
 exit 1
 }
 
+# function to handle rsync return codes
+handle_rsync_ret() {
+  declare ret="$1" vm="$2" src="$3" dst="$4"
+
+  if [[ "${ret}" -eq "0" ]]; then
+    echo "rabe-backup Sync of ${src} to ${dst} successful!"
+  elif [[ "${ret}" -eq "23" ]]; then
+    echo "rabe-backup INFO: ${src} does not exist."
+  elif [[ "${ret}" -eq "12" ]]; then
+    echo "rabe-backup ERROR: Permission denied on ${src}."
+    (("errors_vm++"));
+  elif [[ "${ret}" -eq "255" ]]; then
+    echo "rabe-backup ERROR: Host ${vm}.vm-admin.int.rabe.ch is not online or could not be resolved."
+    (("errors_vm++"));
+  else
+    echo "rabe-backup ERROR: Unknown error (${ret}) occured when trying to rsync $src."
+    (("errors_vm++"));
+  fi
+}
+
+# function to remotely fetch content of a file
+cat_remote_file() {
+  declare vm="$1" file="$2"
+
+  ${RSH_CMD} "${vm}.vm-admin.int.rabe.ch" "cat ${file}"
+}
+
+# function to backup custom directories specified by the remote vm
+backup_custom_dir() {
+  declare vm="$1"
+
+  # fetch include and exclude files
+  local includes=$(cat_remote_file "${vm}" "${REMOTE_INCLUDE}")
+  # local excludes=$(cat_remote_file "${vm}" "${REMOTE_EXCLUDE}")
+
+  for include in $includes; do
+    syncdir="${vm}.vm-admin.int.rabe.ch:${include}"
+    rsync --rsync-path="sudo /bin/rsync" \
+      --rsh="${RSH_CMD}" \
+      ${RSYNC_OPTS} \
+      "${syncdir}" "${BACKUP_DST_DIR}/${vm}"
+    handle_rsync_ret "${?}" "${vm}" "${syncdir}" "${BACKUP_DST_DIR}/${vm}"
+  done
+}
+
 # Main -------------------------------------------------------------------------
 
 # Configure rsync --bwlimit if backup is executed during the day
@@ -182,6 +228,9 @@ do
    let "errors_vm++";
   fi
   done
+
+  # backup directories specified by the remote vm
+  backup_custom_dir "${i}"
 
 if [ $errors_vm -eq 0 ];
 then
