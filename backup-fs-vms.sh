@@ -31,6 +31,10 @@ RSYNC_OPTS="--verbose --archive --recursive --acls --devices --specials --delete
 readonly REMOTE_INCLUDE="/etc/rabe-backup.include"
 readonly REMOTE_EXCLUDE="/etc/rabe-backup.exclude"
 
+if [[ "${DEBUG}" == 'true' ]]; then
+  set -o xtrace
+  RSYNC_OPTS="${RSYNC_OPTS} --dry-run"
+fi
 
 function get_vm_list()
 {
@@ -215,25 +219,7 @@ do
       $syncdir ${BACKUP_DST_DIR}/${i}
 
   fi
-  ret=$?
-  if [ $ret -eq "0" ]
-  then
-    echo "rabe-backup Sync of $syncdir to ${BACKUP_DST_DIR}/${i} successfull!"
-  elif [ $ret -eq "23" ]
-  then
-    echo "rabe-backup INFO: $syncdir does not exist."
-  elif [ $ret -eq "12" ]
-  then
-    echo "rabe-backup ERROR: Permission denied on $syncdir."
-    let "errors_vm++";
-  elif [ $ret -eq "255" ]
-  then
-    echo "rabe-backup ERROR: Host $i.***REMOVED*** is not online or could not be resolved."
-    let "errors_vm++";
-  else
-   echo "rabe-backup ERROR: Unknown error ($ret) occured when trying to rsync $syncdir."
-   let "errors_vm++";
-  fi
+  handle_rsync_ret "${?}" "${i}" "${syncdir}" "${BACKUP_DST_DIR}/${i}"
   done
 
   # backup directories specified by the remote vm
