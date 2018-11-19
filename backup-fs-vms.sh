@@ -147,7 +147,7 @@ cat_remote_file() {
 }
 
 # function to backup custom directories specified by the remote vm
-backup_custom_dir() {
+backup_custom_dirs() {
   declare vm="$1"
 
   # fetch include and exclude files
@@ -237,7 +237,7 @@ do
   done
 
   # backup directories specified by the remote vm
-  backup_custom_dir "${i}"
+  backup_custom_dirs "${i}"
 
 if [ $errors_vm -eq 0 ];
 then
