@@ -162,7 +162,7 @@ backup_custom_dirs() {
   # https://superuser.com/a/625231
   local exclude_opts="--relative"
   for exclude in $excludes; do
-    exclude_opts="${exclude_opts} --exclude $exclude"
+    exclude_opts="${exclude_opts} --exclude ${exclude}"
   done
 
   for include in $includes; do
