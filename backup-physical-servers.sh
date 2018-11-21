@@ -28,8 +28,12 @@ SSH_KEY="/home/backup/.ssh/id_rsa"
 RSH_CMD="/usr/bin/ssh -i ${SSH_KEY} -l ${SSH_USER}"
 BACKUP_DST_DIR=/srv/backup/remote-backup
 RSYNC_OPTS="--verbose --archive --recursive --acls --devices --specials --delete --numeric-ids --timeout=120 --stats --human-readable --progress --inplace --one-file-system" 
-SERVERS_TO_BACKUP+=("***REMOVED***" "***REMOVED***" "***REMOVED***")
+SERVERS_TO_BACKUP+=("***REMOVED***" "***REMOVED***" "***REMOVED***" "***REMOVED***")
 
+if [[ "${DEBUG}" == 'true' ]]; then
+  set -o xtrace
+  RSYNC_OPTS="${RSYNC_OPTS} --dry-run"
+fi
 
 function backup_success()
 {
@@ -113,14 +117,14 @@ do
   do
   syncdir=${client}:/${j}
 
-set -x
+# set -x
   rsync \
     --rsync-path="sudo /bin/rsync" \
     --rsh="${RSH_CMD}" \
     ${RSYNC_OPTS} \
     --xattrs \
     $syncdir ${BACKUP_DST_DIR}/${i}
-set +x
+# set +x
 
   ret=$?
   if [ $ret -eq "0" ]
