@@ -28,8 +28,12 @@ SSH_KEY="/home/backup/.ssh/id_rsa"
 RSH_CMD="/usr/bin/ssh -i ${SSH_KEY} -l ${SSH_USER}"
 BACKUP_DST_DIR=/srv/backup/remote-backup
 RSYNC_OPTS="--verbose --archive --recursive --acls --devices --specials --delete --numeric-ids --timeout=120 --stats --human-readable --progress --inplace --one-file-system" 
-SERVERS_TO_BACKUP+=("server-001.admin.int.rabe.ch" "server-002.admin.int.rabe.ch" "server-003.admin.int.rabe.ch")
+SERVERS_TO_BACKUP+=("server-001.admin.int.rabe.ch" "server-002.admin.int.rabe.ch" "server-003.admin.int.rabe.ch" "rec-01.admin.int.rabe.ch")
 
+if [[ "${DEBUG}" == 'true' ]]; then
+  set -o xtrace
+  RSYNC_OPTS="${RSYNC_OPTS} --dry-run"
+fi
 
 function backup_success()
 {
@@ -113,14 +117,14 @@ do
   do
   syncdir=${client}:/${j}
 
-set -x
+# set -x
   rsync \
     --rsync-path="sudo /bin/rsync" \
     --rsh="${RSH_CMD}" \
     ${RSYNC_OPTS} \
     --xattrs \
     $syncdir ${BACKUP_DST_DIR}/${i}
-set +x
+# set +x
 
   ret=$?
   if [ $ret -eq "0" ]
