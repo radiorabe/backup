@@ -40,7 +40,7 @@ function get_vm_list()
 {
 
 local ovirt_url="https://***REMOVED***/ovirt-engine/api"
-local ovirt_user="admin@internal"
+local ovirt_user="***REMOVED***"
 local ovirt_password=`cat /home/backup/.ovirt_password`
 
 local tmpVMS=`mktemp`
