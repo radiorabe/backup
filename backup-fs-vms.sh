@@ -27,7 +27,7 @@ SSH_USER="backup"
 SSH_KEY="/home/backup/.ssh/id_rsa"
 RSH_CMD="/usr/bin/ssh -i ${SSH_KEY} -l ${SSH_USER}"
 BACKUP_DST_DIR=/srv/backup/remote-backup
-RSYNC_OPTS="--verbose --archive --recursive --acls --devices --specials --delete --numeric-ids --timeout=120 --stats --human-readable --progress --inplace --one-file-system" 
+RSYNC_OPTS="--verbose --archive --recursive --acls --devices --specials --delete --numeric-ids --timeout=120 --stats --human-readable --progress --inplace --one-file-system --relative"
 readonly REMOTE_INCLUDE="/etc/rabe-backup.include"
 readonly REMOTE_EXCLUDE="/etc/rabe-backup.exclude"
 
@@ -158,9 +158,7 @@ backup_custom_dirs() {
   local includes=$(cat_remote_file "${vm}" "${REMOTE_INCLUDE}")
   local excludes=$(cat_remote_file "${vm}" "${REMOTE_EXCLUDE}")
 
-  # `--relative` is required to exclude absolute paths
-  # https://superuser.com/a/625231
-  local exclude_opts="--relative"
+  local exclude_opts=""
   for exclude in $excludes; do
     exclude_opts="${exclude_opts} --exclude ${exclude}"
   done
