@@ -61,6 +61,10 @@ install-bin:
 	systemctl enable rabe-backup.timer
 	systemctl enable rabe-backup.service
 
+diff:
+	echo Difference between git files and installed files
+	diff -r .  $(BINDIR)/
+
 install-man:
 
 install-doc:
