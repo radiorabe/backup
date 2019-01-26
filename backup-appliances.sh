@@ -28,7 +28,7 @@ SSH_KEY="/home/backup/.ssh/id_rsa"
 RSH_CMD="/usr/bin/ssh -i ${SSH_KEY} -l ${SSH_USER}"
 BACKUP_DST_DIR=/srv/backup/remote-backup
 #APPLIANCE_LIST+=("gw-001.***REMOVED***" "gw-002.***REMOVED***" "ap-001.admin.int.rabe.ch")
-APPLIANCE_LIST+=("***REMOVED***" "***REMOVED***" "ap-001.admin.int.rabe.ch")
+APPLIANCE_LIST+=("***REMOVED***" "***REMOVED***")
 
 function backup_success()
 {
