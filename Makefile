@@ -21,16 +21,17 @@ ETCDIR		?= /etc
 BINDIR		= $(PREFIX)/local/scripts/backup
 LIBDIR		= $(PREFIX)/lib
 UNITDIR		= $(LIBDIR)/systemd/system
-#DOCDIR		= $(PREFIX)/share/doc/$(PN)
-#MAN1DIR        = $(PREFIX)/share/man/man1
 
 all:
 
 test:
 	@echo Testing script syntax...
+	bash -n backup-physical-servers.sh
+	bash -n backup-userdata.sh
 	bash -n backup-appliances.sh
 	bash -n backup-fs-vms.sh
 	bash -n run-all.sh
+	bash -n logging.lib
 	@echo done.
 
 uninstall:
@@ -41,11 +42,16 @@ uninstall:
 	rm $(BINDIR)/run-all.sh
 	rm $(BINDIR)/backup-appliances.sh
 	rm $(BINDIR)/backup-fs-vms.sh
+	rm $(BINDIR)/backup-physical-servers.sh
+	rm $(BINDIR)/backup-userdata.sh
+	rm $(BINDIR)/logging.lib
+	rmdir $(BINDIR)
 	systemctl daemon-reload
 	@echo done.
 
 install-bin:
 	@echo 'installing main scripts...'
+	install -Dm755 logging.lib "$(BINDIR)/logging.lib"
 	install -Dm755 backup-appliances.sh "$(BINDIR)/backup-appliances.sh"
 	install -Dm755 backup-fs-vms.sh "$(BINDIR)/backup-fs-vms.sh"
 	install -Dm755 backup-physical-servers.sh "$(BINDIR)/backup-physical-servers.sh"
@@ -62,8 +68,9 @@ install-bin:
 	systemctl enable rabe-backup.service
 
 diff:
-	echo Difference between git files and installed files
-	diff -r .  $(BINDIR)/
+	@echo Difference between git files and installed files
+	find -type f -name \*.sh -exec diff -r {} $(BINDIR) \;
+	find -type f -name \*.lib -exec diff -r {} $(BINDIR) \;
 
 install-man:
 

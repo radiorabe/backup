@@ -1,0 +1,38 @@
+# ------------------------------------------------------------------------------
+# File:         logging.lib
+# Description:  Base logging functionality for bash scripts
+#
+# License:      This program is free software; you can redistribute it and/
+#               or modify it under the terms of the GNU General Public
+#               License as published by the Free Software Foundation;
+#               version 2 dated June, 1991.
+#
+# Usage:        1. . /path/to/logging.lib
+#               2. use functions
+#
+# ------------------------------------------------------------------------------
+
+logging()
+#
+# Description:  It writes messages to logfile or standard output.
+#
+# Parameter  :  $1 - the level of message
+#               $2 - the message
+#
+# Std. Output:  Logging messages.
+#
+{
+ prefix=""
+
+ case $1 in
+   -e)     prefix="Error:   ";;
+   -i)     prefix="Info:    ";;
+   -n)     prefix="Notice:  ";;
+   -s)     prefix="Success: ";;
+   -w)     prefix="Warning: ";;
+   -d)     prefix="Debug:   ";;
+   -a)     prefix="         ";;
+ esac
+ shift
+ echo "${prefix} $0" ${1}
+}
