@@ -43,7 +43,7 @@ startTime=$1;
 
 if [ -z $startTime ];
 then
-  echo "WARNING: Backup start time was not set!"
+  logging -w "Backup start time was not set!"
   return 1
 fi
 
@@ -53,7 +53,7 @@ zabbixHostName=$( ssh -i ${SSH_KEY} ${SSH_USER}@${client} \
 
 if [ -z $zabbixHostName ];
 then
-  echo "WARNING: Could not recognize zabbix hostname!"
+  logging -w "Could not recognize zabbix hostname!"
   return 1
 fi
 
@@ -88,23 +88,28 @@ control_c()
 # Output     :  logging
 #
 {
-echo "rabe-backup CTRL-C catched"
+logging -n "rabe-backup CTRL-C catched"
 exit 1
 }
 
 # Main -------------------------------------------------------------------------
 
+# Source logging: https://stackoverflow.com/questions/59895/get-the-source-directory-of-a-bash-script-from-within-the-script-itself
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+. $SCRIPT_DIR/logging.lib
+
+
 # Configure rsync --bwlimit if backup is executed during the day
 BW_LIMIT_HOUR="`date +%H`"
 if [ "$BW_LIMIT_HOUR" -ge 7 -a "$BW_LIMIT_HOUR" -le 23 ];
 then
-    echo "Starting backup with limited bandwidth - 100 MBit/s"
+    logging -i "Starting backup with limited bandwidth - 100 MBit/s"
     RSYNC_OPTS="$RSYNC_OPTS --bwlimit=10240"
 fi
 
 mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bkp
 
-echo "rabe-backup rsync backup of VMS starting."
+logging -i "rsync backup of VMS starting."
 
 errors_client_all=0;
 for i in "${SERVERS_TO_BACKUP[@]}"
@@ -129,20 +134,20 @@ do
   ret=$?
   if [ $ret -eq "0" ]
   then
-    echo "rabe-backup Sync of $syncdir to ${BACKUP_DST_DIR}/${i} successfull!"
+    logging -s "rabe-backup Sync of $syncdir to ${BACKUP_DST_DIR}/${i} successfull!"
   elif [ $ret -eq "23" ]
   then
-    echo "rabe-backup INFO: $syncdir does not exist."
+    logging -i "$syncdir does not exist."
   elif [ $ret -eq "12" ]
   then
-    echo "rabe-backup ERROR: Permission denied on $syncdir."
+    logging -e "Permission denied on $syncdir."
     let "errors_client++";
   elif [ $ret -eq "255" ]
   then
-    echo "rabe-backup ERROR: Host $i.***REMOVED*** is not online or could not be resolved."
+    logging -e "Host $i.***REMOVED*** is not online or could not be resolved."
     let "errors_client++";
   else
-   echo "rabe-backup ERROR: Unknown error ($ret) occured when trying to rsync $syncdir."
+   logging -e "Unknown error ($ret) occured when trying to rsync $syncdir."
    let "errors_client++";
   fi
   done
@@ -151,17 +156,17 @@ if [ $errors_client -eq 0 ];
 then
   if ! backup_success $startTime;
   then
-      echo "rabe-backup ERROR: backup_success: Could not send statuses for ${zabbixHostName} to zabbix"
+      logging -e "Could not send statuses for ${zabbixHostName} to zabbix"
   fi
 else
   let "errors_client_all++";
-  echo "rabe-backup WARNING: $client had problems during the backup job."
+  logging -w "$client had problems during the backup job."
 fi
 
 done
 
 mv ~/.ssh/known_hosts.bkp ~/.ssh/known_hosts
-echo "rabe-backup: Script finished; $errors_client_all VMs had problems during the backup job."
+logging -i "rabe-backup: Script finished; $errors_client_all VMs had problems during the backup job."
 
 if [ $errors_client_all -gt 0 ];
 then

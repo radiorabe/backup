@@ -38,7 +38,7 @@ startTime=$2;
 
 if [ -z $startTime ];
 then
-  echo "rabe-backup WARNING: Backup start time was not set!"
+  logging -w "Backup start time was not set!"
   return 1
 fi
 
@@ -46,7 +46,7 @@ zabbixHostName=$1
 
 if [ -z $zabbixHostName ];
 then
-  echo "rabe-backup WARNING: Could not recognize zabbix hostname!"
+  logging -w "Could not recognize zabbix hostname!"
   return 1
 fi
 
@@ -81,15 +81,19 @@ control_c()
 # Output     :  logging
 #
 {
-echo "rabe-backup CTRL-C catched"
+logging -n "rabe-backup CTRL-C catched"
 exit 1
 }
 
 # Main -------------------------------------------------------------------------
 
+# Source logging: https://stackoverflow.com/questions/59895/get-the-source-directory-of-a-bash-script-from-within-the-script-itself
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+. $SCRIPT_DIR/logging.lib
+
 mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bkp
 
-echo "rabe-backup: Appliance backup starting."
+logging -i "Appliance backup starting."
 
 errors_vm_all=0;
 for i in "${APPLIANCE_LIST[@]}"
@@ -107,9 +111,9 @@ do
   ret=$?
   if [ $ret -eq "0" ]
   then
-    echo "rabe-backup SUCCESS: Backup of $syncdir to ${BACKUP_DST_DIR}/${i} successfull!"
+    logging -s "Backup of $syncdir to ${BACKUP_DST_DIR}/${i} successfull!"
   else
-   echo "rabe-backup ERROR: Unknown error ($ret) occured when trying to backup $syncdir."
+   logging -e "Unknown error ($ret) occured when trying to backup $syncdir."
    let "errors_vm++";
   fi
 done
@@ -118,17 +122,17 @@ if [ $errors_vm -eq 0 ];
 then
   if ! backup_success $vm_name $startTime;
   then
-      echo "rabe-backup ERROR: backup_success: Could not send statuses for ${zabbixHostName} to zabbix"
+      logging -e "Could not send statuses for ${zabbixHostName} to zabbix"
   fi
 else
   let "errors_vm_all++";
-  echo "rabe-backup WARNING: $vm_name had problems during the backup job."
+  logging -w "$vm_name had problems during the backup job."
 fi
 
 done
 
 mv ~/.ssh/known_hosts.bkp ~/.ssh/known_hosts
-echo "rabe-backup: Script finished; $errors_vm_all appliances had problems during the backup job."
+logging -i "Script finished; $errors_vm_all appliances had problems during the backup job."
 
 if [ $errors_vm_all -gt 0 ];
 then

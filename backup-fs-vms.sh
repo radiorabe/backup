@@ -56,7 +56,7 @@ if ! curl \
   | sed -n 's/<name>\(vm-.\{4\}\)<\/name>/\1/p' | tr -d '\n' >$tmpVMS;
 then
   Ret=$?
-  echo "ERROR: Cannot fetch list of VMs via ovirt api! Returnvalue=$Ret"
+  logging -e "Cannot fetch list of VMs via ovirt api! Returnvalue=$Ret"
   exit $Ret
 fi
 
@@ -74,7 +74,7 @@ startTime=$1;
 
 if [ -z $startTime ];
 then
-  echo "WARNING: Backup start time was not set!"
+  logging -w "Backup start time was not set!"
   return 1
 fi
 
@@ -84,7 +84,7 @@ zabbixHostName=$( ssh -i ${SSH_KEY} ${SSH_USER}@${vm_name} \
 
 if [ -z $zabbixHostName ];
 then
-  echo "WARNING: Could not recognize zabbix hostname!"
+  logging -w "Could not recognize zabbix hostname!"
   return 1
 fi
 
@@ -119,7 +119,7 @@ control_c()
 # Output     :  logging
 #
 {
-echo "rabe-backup CTRL-C catched"
+logging -w "CTRL-C catched"
 exit 1
 }
 
@@ -128,17 +128,17 @@ handle_rsync_ret() {
   declare ret="$1" vm="$2" src="$3" dst="$4"
 
   if [[ "${ret}" -eq "0" ]]; then
-    echo "rabe-backup Sync of ${src} to ${dst} successful!"
+    logging -s "Sync of ${src} to ${dst} successful!"
   elif [[ "${ret}" -eq "23" ]]; then
-    echo "rabe-backup INFO: ${src} does not exist."
+    logging -i "${src} does not exist."
   elif [[ "${ret}" -eq "12" ]]; then
-    echo "rabe-backup ERROR: Permission denied on ${src}."
+    logging -e "Permission denied on ${src}."
     (("errors_vm++"));
   elif [[ "${ret}" -eq "255" ]]; then
-    echo "rabe-backup ERROR: Host ${vm}.***REMOVED*** is not online or could not be resolved."
+    logging -e "Host ${vm}.***REMOVED*** is not online or could not be resolved."
     (("errors_vm++"));
   else
-    echo "rabe-backup ERROR: Unknown error (${ret}) occured when trying to rsync $src."
+    logging -e "Unknown error (${ret}) occured when trying to rsync $src."
     (("errors_vm++"));
   fi
 }
@@ -175,11 +175,16 @@ backup_custom_dirs() {
 
 # Main -------------------------------------------------------------------------
 
+
+# Source logging: https://stackoverflow.com/questions/59895/get-the-source-directory-of-a-bash-script-from-within-the-script-itself
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+. $SCRIPT_DIR/logging.lib
+
 # Configure rsync --bwlimit if backup is executed during the day
 BW_LIMIT_HOUR="`date +%H`"
 if [ "$BW_LIMIT_HOUR" -ge 7 -a "$BW_LIMIT_HOUR" -le 23 ];
 then
-    echo "Starting backup with limited bandwidth - 100 MBit/s"
+    logging -i "Starting backup with limited bandwidth - 100 MBit/s"
     RSYNC_OPTS="$RSYNC_OPTS --bwlimit=10240"
 fi
 
@@ -187,7 +192,7 @@ get_vm_list
 
 mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bkp
 
-echo "rabe-backup rsync backup of VMS starting."
+logging -i "rsync backup of VMS starting."
 
 errors_vm_all=0;
 for i in "${VMS[@]}"
@@ -227,17 +232,17 @@ if [ $errors_vm -eq 0 ];
 then
   if ! backup_success $startTime;
   then
-      echo "rabe-backup ERROR: backup_success: Could not send statuses for ${zabbixHostName} to zabbix"
+      logging -e "Could not send statuses for ${zabbixHostName} to zabbix"
   fi
 else
   let "errors_vm_all++";
-  echo "rabe-backup WARNING: $vm_name had problems during the backup job."
+  logging -w "$vm_name had problems during the backup job."
 fi
 
 done
 
 mv ~/.ssh/known_hosts.bkp ~/.ssh/known_hosts
-echo "rabe-backup: Script finished; $errors_vm_all VMs had problems during the backup job."
+logging -e "Script finished; $errors_vm_all VMs had problems during the backup job."
 
 if [ $errors_vm_all -gt 0 ];
 then
