@@ -22,13 +22,11 @@
 #
 PN="`basename "$0" .sh`"
 LOGFILE="/var/log/${PN}.log"  # logfile.
-BACKUP_DIRS="cf/conf/"
+BACKUP_DIRS="home/backup/ cf/conf/ etc/icecast*"
 SSH_USER="backup"
 SSH_KEY="/home/backup/.ssh/id_rsa"
-RSH_CMD="/usr/bin/ssh -i ${SSH_KEY} -l ${SSH_USER}"
 BACKUP_DST_DIR=/srv/backup/remote-backup
-#APPLIANCE_LIST+=("gw-001.vm-admin.int.rabe.ch" "gw-002.vm-admin.int.rabe.ch" "ap-001.admin.int.rabe.ch")
-APPLIANCE_LIST+=("gw-001.admin.int.rabe.ch" "gw-002.admin.int.rabe.ch")
+APPLIANCE_LIST+=("gw-001.admin.int.rabe.ch" "gw-002.admin.int.rabe.ch" "stream.rabe.ch")
 
 function backup_success()
 {
@@ -106,7 +104,7 @@ do
   do
   syncdir=${vm_name}:/${j}
   set -x
-  scp -qrpi ${SSH_KEY} ${SSH_USER}@${syncdir} ${BACKUP_DST_DIR}/${i}
+  scp -rpi ${SSH_KEY} ${SSH_USER}@${syncdir} ${BACKUP_DST_DIR}/${i}
   set +x
   ret=$?
   if [ $ret -eq "0" ]
