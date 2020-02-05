@@ -28,7 +28,7 @@ SSH_KEY="/home/backup/.ssh/id_rsa"
 RSH_CMD="/usr/bin/ssh -i ${SSH_KEY} -l ${SSH_USER}"
 BACKUP_DST_DIR=/srv/backup/remote-backup
 RSYNC_OPTS="--verbose --archive --recursive --acls --devices --specials --delete --numeric-ids --timeout=120 --stats --human-readable --progress --inplace --one-file-system --relative"
-SERVERS_TO_BACKUP+=("server-001.admin.int.rabe.ch" "server-002.admin.int.rabe.ch" "server-003.admin.int.rabe.ch" "rec-01.admin.int.rabe.ch")
+SERVERS_TO_BACKUP+=("server-001.admin.int.rabe.ch" "server-002.admin.int.rabe.ch" "server-003.admin.int.rabe.ch" "rec-01.admin.int.rabe.ch" "vm-0023.dmz.int.rabe.ch")
 
 if [[ "${DEBUG}" == 'true' ]]; then
   set -o xtrace
