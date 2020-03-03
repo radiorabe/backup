@@ -168,8 +168,8 @@ backup_custom_dirs() {
     rsync --rsync-path="sudo /bin/rsync" \
       --rsh="${RSH_CMD}" \
       ${RSYNC_OPTS} ${exclude_opts} \
-      "${syncdir}" "${BACKUP_DST_DIR}/${vm}${include}"
-    handle_rsync_ret "${?}" "${vm}" "${syncdir}" "${BACKUP_DST_DIR}/${vm}${include}"
+      "${syncdir}" "${BACKUP_DST_DIR}/${vm}"
+    handle_rsync_ret "${?}" "${vm}" "${syncdir}" "${BACKUP_DST_DIR}/${vm}"
   done
 }
 
