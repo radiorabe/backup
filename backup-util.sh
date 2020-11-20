@@ -15,8 +15,8 @@ backup_success(){
   if [[ $# -ne 2 ]]; then
     log -e "Incorrect number of parameters for ${FUNCNAME[0]}"
   fi
-  local hostname; hostname=$1
-  local start; start=$2
+  local hostname; hostname="$1"
+  local start; start="$2"
   local ts; ts=$(date +%s)
   local duration=$((ts - start))
   local ret=0
