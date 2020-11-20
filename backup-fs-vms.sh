@@ -70,6 +70,11 @@ function backup_success()
 {
   startTime=$1;
 
+  if [ $vm_name == "vm-0018.vm-admin.int.rabe.ch" ];
+  then
+    logging -i "Not sending Zabbix status for vm-0018"
+    return
+  fi
   if [ -z $startTime ];
   then
     logging -w "Backup start time was not set!"
