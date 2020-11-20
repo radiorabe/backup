@@ -39,8 +39,8 @@ fi
 function get_vm_list()
 {
 
-local ovirt_url="https://***REMOVED***/ovirt-engine/api"
-local ovirt_user="***REMOVED***"
+local ovirt_url="https://ovirt-engine.admin.int.rabe.ch/ovirt-engine/api"
+local ovirt_user="api_ro@internal"
 local ovirt_password=`cat /home/backup/.ovirt_password`
 
 local tmpVMS=`mktemp`
@@ -70,9 +70,9 @@ function backup_success()
 {
   startTime=$1;
 
-  if [ $vm_name == "***REMOVED***.***REMOVED***" ];
+  if [ $vm_name == "vm-0018.vm-admin.int.rabe.ch" ];
   then
-    logging -i "Not sending Zabbix status for ***REMOVED***"
+    logging -i "Not sending Zabbix status for vm-0018"
     return
   fi
   if [ -z $startTime ];
@@ -138,7 +138,7 @@ handle_rsync_ret() {
     logging -e "Permission denied on ${src}."
     (("errors_vm++"));
   elif [[ "${ret}" -eq "255" ]]; then
-    logging -e "Host ${vm}.***REMOVED*** is not online or could not be resolved."
+    logging -e "Host ${vm}.vm-admin.int.rabe.ch is not online or could not be resolved."
     (("errors_vm++"));
   else
     logging -e "Unknown error (${ret}) occured when trying to rsync $src."
@@ -150,7 +150,7 @@ handle_rsync_ret() {
 cat_remote_file() {
   declare vm="$1" file="$2"
 
-  ${RSH_CMD} "${vm}.***REMOVED***" "cat ${file}"
+  ${RSH_CMD} "${vm}.vm-admin.int.rabe.ch" "cat ${file}"
 }
 
 # function to backup custom directories specified by the remote vm
@@ -167,7 +167,7 @@ backup_custom_dirs() {
   done
 
   for include in $includes; do
-    syncdir="${vm}.***REMOVED***:${include}"
+    syncdir="${vm}.vm-admin.int.rabe.ch:${include}"
     rsync --rsync-path="sudo /bin/rsync" \
       --rsh="${RSH_CMD}" \
       ${RSYNC_OPTS} ${exclude_opts} \
@@ -201,14 +201,21 @@ errors_vm_all=0;
 for i in "${VMS[@]}"
 do
   startTime="$(date +%s)";
-  vm_name="$i.***REMOVED***";
+  vm_name="$i.vm-admin.int.rabe.ch";
   errors_vm=0;
-  ssh-keyscan $i.***REMOVED*** >> ~/.ssh/known_hosts 2>/dev/null
+  ssh-keyscan $i.vm-admin.int.rabe.ch >> ~/.ssh/known_hosts 2>/dev/null
+
+  if [ $i == "vm-0023" ];
+  then
+    logging -i "Skipping backup of vm-0023 as it is handled in backup-physical-servers"
+    continue
+  fi
+
   for j in $BACKUP_DIRS
   do
-    syncdir=$i.***REMOVED***:/$j
+    syncdir=$i.vm-admin.int.rabe.ch:/$j
 
-    if [ $i != "***REMOVED***" ];
+    if [ $i != "vm-0018" ];
     then
       rsync --rsync-path="sudo /bin/rsync" \
         --rsh="${RSH_CMD}" \
@@ -216,7 +223,7 @@ do
         --xattrs \
         $syncdir ${BACKUP_DST_DIR}/${i}
     else
-      # ***REMOVED*** = ***REMOVED***: Does not support --xattrs
+      # vm-0018 = rabadub-01: Does not support --xattrs
       rsync --rsync-path="sudo /bin/rsync" \
         --rsh="${RSH_CMD}" \
         ${RSYNC_OPTS} \

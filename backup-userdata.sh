@@ -20,18 +20,18 @@
 #
 # Constants --------------------------------------------------------------------
 #
-BACKUP_SRC_HOST="***REMOVED***.***REMOVED***"
+BACKUP_SRC_HOST="vm-0018.vm-admin.int.rabe.ch"
 BACKUP_SRC_DIRS=(
-    '***REMOVED***/'
-    '***REMOVED***/'
-    '***REMOVED***/'
-    '***REMOVED***/'
+    '/vservers/hq.rabe.ch/samba-01/home/'
+    '/vservers/hq.rabe.ch/samba-01/music/'
+    '/vservers/hq.rabe.ch/samba-01/shares/'
+    '/vservers/hq.rabe.ch/samba-01/transfer/'
     )
 BACKUP_DST_DIRS=(
-    '***REMOVED***'
-    '***REMOVED***'
-    '***REMOVED***'
-    '***REMOVED***'
+    '/srv/backup/homes'
+    '/srv/backup/music'
+    '/srv/backup/shares'
+    '/srv/backup/transfer'
     )
 SSH_USER="backup"
 SSH_KEY="/home/backup/.ssh/id_rsa"
@@ -119,7 +119,7 @@ mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bkp
 logging -i "rabe-backup rsync backup of userdata starting."
 
 startTime="$(date +%s)";
-vm_name=".***REMOVED***";
+vm_name=".vm-admin.int.rabe.ch";
 errors=0;
 ssh-keyscan $BACKUP_SRC_HOST >> ~/.ssh/known_hosts 2>/dev/null
 
@@ -157,7 +157,7 @@ then
   let "errors++";
 elif [ $ret -eq "255" ]
 then
-  logging -e "Host $i.***REMOVED*** is not online or could not be resolved."
+  logging -e "Host $i.vm-admin.int.rabe.ch is not online or could not be resolved."
   let "errors++";
 else
  logging -e "Unknown error ($ret) occured when trying to rsync $syncdir."
