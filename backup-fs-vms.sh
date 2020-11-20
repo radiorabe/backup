@@ -204,6 +204,13 @@ do
   vm_name="$i.vm-admin.int.rabe.ch";
   errors_vm=0;
   ssh-keyscan $i.vm-admin.int.rabe.ch >> ~/.ssh/known_hosts 2>/dev/null
+
+  if [ $i == "vm-0023" ];
+  then
+    logging -i "Skipping backup of vm-0023 as it is handled in backup-physical-servers"
+    continue
+  fi
+
   for j in $BACKUP_DIRS
   do
     syncdir=$i.vm-admin.int.rabe.ch:/$j
