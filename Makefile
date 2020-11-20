@@ -37,8 +37,9 @@ test:
 
 ShellCheck:
 	@echo Running ShellCheck...
-	shellcheck run-all.sh
 	shellcheck backup-util.sh
+	shellcheck --exclude=SC1090 run-all.sh
+	shellcheck --exclude=SC1090 backup-appliances.sh
 	@echo done
 
 uninstall:
