@@ -70,6 +70,11 @@ function backup_success()
 {
   startTime=$1;
 
+  if [ $vm_name == "***REMOVED***.***REMOVED***" ];
+  then
+    logging -i "Not sending Zabbix status for ***REMOVED***"
+    return
+  fi
   if [ -z $startTime ];
   then
     logging -w "Backup start time was not set!"
