@@ -1,25 +1,29 @@
 #!/bin/bash
+# shellcheck disable=SC1090
+set -u
+. "$(dirname "$0")/backup-util.sh"
+
 PATH="/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/scripts/backup"
+STEPS=(
+  "backup-appliances.sh"
+  "backup-fs-vms.sh"
+  "backup-physical-servers.sh"
+  "backup-userdata.sh"
+  "btrbk run"
+)
 
-RetVal=0
+errs=0
 
-echo "rabe-backup started"
-
-backup-appliances.sh || RetVal=$?
-echo "backup-appliances.sh finished; status=${RetVal}"
-
-backup-fs-vms.sh || RetVal=$?
-echo "backup-fs-vms.sh finished; status=${RetVal}"
-
-backup-physical-servers.sh || RetVal=$?
-echo "backup-physical-servers.sh finished; status=${RetVal}"
-
-backup-userdata.sh || RetVal=$?
-echo "backup-userdata.sh finished; status=${RetVal}"
-
-btrbk run || RetVal=$?
-echo "btrbk run finished; status=${RetVal}"
-
-echo "rabe-backup finished; script exitstatus=${RetVal}"
-
-exit $RetVal
+log -i "Starting RaBe Backup"
+for step in "${STEPS[@]}"; do
+  $step
+  ret="$?"
+  log -i "$step finished; status=$ret"
+  if [[ $ret -ne 0 ]]; then
+    ((errs++))
+  fi
+done
+log -i "$0 finished; errors=$errs"
+# shellcheck disable=SC2086
+exit $errs
+# vim: tabstop=2 shiftwidth=2 expandtab

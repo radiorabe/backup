@@ -30,9 +30,16 @@ test:
 	bash -n backup-userdata.sh
 	bash -n backup-appliances.sh
 	bash -n backup-fs-vms.sh
+	bash -n backup-util.sh
 	bash -n run-all.sh
 	bash -n logging.lib
 	@echo done.
+
+ShellCheck:
+	@echo Running ShellCheck...
+	shellcheck run-all.sh
+	shellcheck backup-util.sh
+	@echo done
 
 uninstall:
 	@echo Cleaning up files...
@@ -56,6 +63,7 @@ install-bin:
 	install -Dm755 backup-fs-vms.sh "$(BINDIR)/backup-fs-vms.sh"
 	install -Dm755 backup-physical-servers.sh "$(BINDIR)/backup-physical-servers.sh"
 	install -Dm755 backup-userdata.sh "$(BINDIR)/backup-userdata.sh"
+	install -Dm755 backup-util.sh "$(BINDIR)/backup-util.sh"
 	install -Dm755 run-all.sh "$(BINDIR)/run-all.sh"
 	@echo 'installing btrbk.conf...'
 	install -Dm644 config/btrbk.conf "$(ETCDIR)/btrbk/btrbk.conf"
