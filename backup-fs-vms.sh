@@ -68,43 +68,41 @@ rm $tmpVMS
 
 function backup_success()
 {
+  startTime=$1;
 
+  if [ -z $startTime ];
+  then
+    logging -w "Backup start time was not set!"
+    return 1
+  fi
 
-startTime=$1;
-
-if [ -z $startTime ];
-then
-  logging -w "Backup start time was not set!"
-  return 1
-fi
-
-zabbixHostName=$( ssh -i ${SSH_KEY} ${SSH_USER}@${vm_name} \
+  zabbixHostName=$( ssh -i ${SSH_KEY} ${SSH_USER}@${vm_name} \
     grep -Po "'(?<=^Hostname=).*'" \
       /etc/zabbix/zabbix_agentd.conf)
 
-if [ -z $zabbixHostName ];
-then
-  logging -w "Could not recognize zabbix hostname!"
-  return 1
-fi
+  if [ -z $zabbixHostName ];
+  then
+    logging -w "Could not recognize zabbix hostname!"
+    return 1
+  fi
 
-timestamp=$(date +%s);
-duration=$(($timestamp - $startTime));
-Ret=0
+  timestamp=$(date +%s);
+  duration=$(($timestamp - $startTime));
+  Ret=0
 
-# Send the timestamp of the last successfull backup
-zabbix_sender --config /etc/zabbix/zabbix_agentd.conf \
-              --host "${zabbixHostName}" \
-              --key 'rabe.rabe-backup.run.success[]' \
-              --value "$timestamp" || Ret=$?
+  # Send the timestamp of the last successfull backup
+  zabbix_sender --config /etc/zabbix/zabbix_agentd.conf \
+    --host "${zabbixHostName}" \
+    --key 'rabe.rabe-backup.run.success[]' \
+    --value "$timestamp" || Ret=$?
 
-# Send the duration of the last backup run in seconds
-zabbix_sender --config /etc/zabbix/zabbix_agentd.conf \
-              --host "${zabbixHostName}" \
-              --key 'rabe.rabe-backup.run.duration[]' \
-              --value "$duration" || Ret=$?
+  # Send the duration of the last backup run in seconds
+  zabbix_sender --config /etc/zabbix/zabbix_agentd.conf \
+    --host "${zabbixHostName}" \
+    --key 'rabe.rabe-backup.run.duration[]' \
+    --value "$duration" || Ret=$?
 
-return $Ret;
+  return $Ret;
 }
 
 # trap keyboard interrupt (control-c)
@@ -203,42 +201,38 @@ do
   ssh-keyscan $i.***REMOVED*** >> ~/.ssh/known_hosts 2>/dev/null
   for j in $BACKUP_DIRS
   do
-  syncdir=$i.***REMOVED***:/$j
+    syncdir=$i.***REMOVED***:/$j
 
-  if [ $i != "***REMOVED***" ];
-  then
-    rsync --rsync-path="sudo /bin/rsync" \
-      --rsh="${RSH_CMD}" \
-      ${RSYNC_OPTS} \
-      --xattrs \
-      $syncdir ${BACKUP_DST_DIR}/${i}
-
-  else
-
-    # ***REMOVED*** = ***REMOVED***: Does not support --xattrs
-    rsync --rsync-path="sudo /bin/rsync" \
-      --rsh="${RSH_CMD}" \
-      ${RSYNC_OPTS} \
-      $syncdir ${BACKUP_DST_DIR}/${i}
-
-  fi
-  handle_rsync_ret "${?}" "${i}" "${syncdir}" "${BACKUP_DST_DIR}/${i}"
+    if [ $i != "***REMOVED***" ];
+    then
+      rsync --rsync-path="sudo /bin/rsync" \
+        --rsh="${RSH_CMD}" \
+        ${RSYNC_OPTS} \
+        --xattrs \
+        $syncdir ${BACKUP_DST_DIR}/${i}
+    else
+      # ***REMOVED*** = ***REMOVED***: Does not support --xattrs
+      rsync --rsync-path="sudo /bin/rsync" \
+        --rsh="${RSH_CMD}" \
+        ${RSYNC_OPTS} \
+        $syncdir ${BACKUP_DST_DIR}/${i}
+    fi
+    handle_rsync_ret "${?}" "${i}" "${syncdir}" "${BACKUP_DST_DIR}/${i}"
   done
 
   # backup directories specified by the remote vm
   backup_custom_dirs "${i}"
 
-if [ $errors_vm -eq 0 ];
-then
-  if ! backup_success $startTime;
+  if [ $errors_vm -eq 0 ];
   then
+    if ! backup_success $startTime;
+    then
       logging -e "Could not send statuses for ${zabbixHostName} to zabbix"
+    fi
+  else
+    let "errors_vm_all++";
+    logging -w "$vm_name had problems during the backup job."
   fi
-else
-  let "errors_vm_all++";
-  logging -w "$vm_name had problems during the backup job."
-fi
-
 done
 
 mv ~/.ssh/known_hosts.bkp ~/.ssh/known_hosts
