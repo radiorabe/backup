@@ -1,5 +1,4 @@
 #!/bin/bash
-# shellcheck disable=SC1090
 set -u
 . "$(dirname "$0")/backup-util.sh"
 
