@@ -26,7 +26,7 @@ BACKUP_DIRS="home/backup/ cf/conf/ etc/icecast*"
 SSH_USER="backup"
 SSH_KEY="/home/backup/.ssh/id_rsa"
 BACKUP_DST_DIR=/srv/backup/remote-backup
-APPLIANCE_LIST+=("gw-001.admin.int.rabe.ch" "gw-002.admin.int.rabe.ch" "stream.rabe.ch")
+APPLIANCE_LIST+=("***REMOVED***" "***REMOVED***" "***REMOVED***")
 
 function backup_success()
 {
