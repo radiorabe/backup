@@ -40,6 +40,7 @@ ShellCheck:
 	shellcheck backup-util.sh
 	shellcheck --exclude=SC1090 run-all.sh
 	shellcheck --exclude=SC1090 backup-appliances.sh
+	shellcheck --exclude=SC1090 backup-fs-vms.sh
 	@echo done
 
 uninstall:
