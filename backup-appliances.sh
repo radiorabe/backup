@@ -32,11 +32,9 @@ main(){
       fi
     done
     if [[ $errs -eq 0 ]]; then
-      if ! backup_success "$gw" "$start"; then
-        log -e "Could not send status for $gw to Zabbix"
-      fi
+      backup_success "$gw" "$start"
     else
-      ((errs_vm_all++))
+      ((errs_all++))
       log -w "$gw had problems during the backup job"
     fi
   done
@@ -49,9 +47,7 @@ main(){
   set +x
   if [[ $ret -eq 0 ]]; then
     log -s "Backup of $STREAM:$STREAM_DIR to $BACKUP_DST_DIR/$STREAM successful!"
-    if ! backup_success "$gw" "$start"; then
-      log -e "Could not send status for $gw to Zabbix"
-    fi
+    backup_success "$gw" "$start"
   else
     log -e "Unknown error ($ret) occured when trying to backup $gw:$dir."
     ((errs_all++))
@@ -59,9 +55,7 @@ main(){
 
   mv ~/.ssh/known_hosts.bkp ~/.ssh/known_hosts
   log -i "Script finished; $errs_all appliances had problems during the backup job."
-  if [[ $errs_all -gt 0 ]]; then
-    exit 1
-  fi
+  exit "$errs_all"
 }
 main
 # vim: tabstop=2 shiftwidth=2 expandtab
