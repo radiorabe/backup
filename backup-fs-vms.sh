@@ -47,9 +47,7 @@ main(){
     log -i "Ended backup of custom dirs for $vm_fqdn. Current errors: $errs"
     if [[ $errs -eq 0 ]]; then
       log -i "Backup of $vm_fqdn successful!"
-      set -x
       backup_success "$vm_fqdn" "$start"
-      set +x
     else
       log -e "$vm had problems during the backup job"
       ((errs_all++))
