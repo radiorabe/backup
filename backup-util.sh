@@ -105,9 +105,9 @@ do_rsync(){
   local src; src=$1
   local dst; dst=$2
   local custom_rsync_opts; custom_rsync_opts=${3-""}
-  #if [[ $src != ***REMOVED**** ]]; then
-  #  custom_rsync_opts="--xattrs $custom_rsync_opts"
-  #fi
+  if [[ $src != ***REMOVED**** ]]; then
+    custom_rsync_opts="--xattrs $custom_rsync_opts"
+  fi
   log -i "Starting rsync from $src to $dst"
   # shellcheck disable=SC2086
   rsync --rsync-path="$RSYNC_PATH" --rsh="$RSH_CMD" --verbose --archive --recursive --acls \
