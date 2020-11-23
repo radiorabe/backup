@@ -12,7 +12,6 @@ set_env(){
   export RSH_CMD="ssh -i $SSH_KEY -l $SSH_USER"
   export BACKUP_DST_DIR="/srv/backup/remote-backup"
   export ZABBIX_CONFIG="/etc/zabbix/zabbix_agentd.conf"
-  export ZABBIX_KEY="rabe.rabe-backup.run.success[]"
   if [[ -n ${DEBUG-} && $DEBUG == true ]]; then
     set -o xtrace
   fi
@@ -58,10 +57,10 @@ backup_success(){
   fi
   # send timestamp of last successful backup
   zabbix_sender --config "$ZABBIX_CONFIG" --host "$zabbix_hostname" \
-    --key "$ZABBIX_KEY" --value "$ts" || ret=$?
+    --key "rabe.rabe-backup.run.success[]" --value "$ts" || ret=$?
   # send duration of last successful backup
   zabbix_sender --config "$ZABBIX_CONFIG" --host "$zabbix_hostname" \
-    --key "$ZABBIX_KEY" --value "$duration" || ret=$?
+    --key "rabe.rabe-backup.run.duration[]" --value "$duration" || ret=$?
   if [[ $ret -ne 0 ]]; then
     log -e "Could not send status for $zabbix_hostname to Zabbix"
   fi

@@ -47,7 +47,7 @@ main(){
   set +x
   if [[ $ret -eq 0 ]]; then
     log -s "Backup of $STREAM:$STREAM_DIR to $BACKUP_DST_DIR/$STREAM successful!"
-    backup_success "$gw" "$start"
+    backup_success "$STREAM" "$start"
   else
     log -e "Unknown error ($ret) occured when trying to backup $gw:$dir."
     ((errs_all++))
