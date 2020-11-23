@@ -64,11 +64,13 @@ backup_success(){
     zabbix_hostname=$hostname
   fi
   # send timestamp of last successful backup
+  set -x
   zabbix_sender --config "$ZABBIX_CONFIG" --host "$zabbix_hostname" \
     --key "rabe.rabe-backup.run.success[]" --value "$ts" || ret=$?
   # send duration of last successful backup
   zabbix_sender --config "$ZABBIX_CONFIG" --host "$zabbix_hostname" \
     --key "rabe.rabe-backup.run.duration[]" --value "$duration" || ret=$?
+  set +x
   if [[ $ret -ne 0 ]]; then
     log -e "Could not send status for $zabbix_hostname to Zabbix"
   fi
