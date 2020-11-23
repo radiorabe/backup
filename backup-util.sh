@@ -37,6 +37,14 @@ log(){
   echo "$prefix $0 $*"
 }
 
+# get content of a remote file
+# usage: cat_remote_file vm-xyz.domain.net /etc/hosts
+cat_remote_file() {
+  local hostname=$1
+  local file=$2
+  $RSH_CMD "$hostname" "cat $file"
+}
+
 # send successful backup run and timestamp to Zabbix
 # usage: backup_success hostname unix_ts_start
 backup_success(){
@@ -50,8 +58,8 @@ backup_success(){
   local duration=$((ts - start))
   local ret=0
   local zabbix_hostname;
-  zabbix_hostname="$(ssh -i "$SSH_KEY" "$SSH_USER"@"$hostname" \
-    grep -Po "'(?<=^Hostname=).*'" /etc/zabbix/zabbix_agentd.conf)"
+  zabbix_hostname="$(cat_remote_file "$hostname" "/etc/zabbix/zabbix_agentd.conf" | \
+    grep "^Hostname=.*$" | awk -F "=" '{print $2}')"
   if [[ -z $zabbix_hostname ]]; then
     zabbix_hostname=$hostname
   fi
@@ -105,14 +113,6 @@ do_rsync(){
     --inplace --one-file-system --relative $custom_rsync_opts "$src" "$dst"
   handle_rsync_ret $? "$src" "$dst"
   return $?
-}
-
-# get content of a remote file
-# usage: cat_remote_file vm-xyz.domain.net /etc/hosts
-cat_remote_file() {
-  local hostname=$1
-  local file=$2
-  $RSH_CMD "$hostname" "cat $file"
 }
 
 # backup directories specified by the remote system
