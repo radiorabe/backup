@@ -27,7 +27,7 @@ main(){
   log -i "Rsync backup of VMs starting"
   mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bkp
   for vm in $(get_vms); do
-    if [[ $vm == "***REMOVED***" ]]; then
+    if [[ $vm == ***REMOVED*** ]]; then
       log -i "Skipping backup of ***REMOVED*** as it is handled in backup-physical-servers.sh"
       continue
     fi
