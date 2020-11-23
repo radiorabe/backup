@@ -1,5 +1,4 @@
 #!/bin/bash
-set -u
 . "$(dirname "$0")/backup-util.sh"
 
 PATH="/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/scripts/backup"
