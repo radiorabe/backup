@@ -27,7 +27,7 @@ main(){
   log -i "Rsync backup of VMs starting"
   mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bkp
   for vm in $(get_vms); do
-    if [[ $vm == "vm-0023" ]]; then
+    if [[ $vm == vm-0023 ]]; then
       log -i "Skipping backup of vm-0023 as it is handled in backup-physical-servers.sh"
       continue
     fi
