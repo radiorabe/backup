@@ -1,6 +1,5 @@
 #!/bin/bash
 # backup files from VMs
-set -u
 . "$(dirname "$0")/backup-util.sh"
 
 BACKUP_DIRS=(
@@ -27,6 +26,7 @@ main(){
   log -i "Rsync backup of VMs starting"
   mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bkp
   for vm in $(get_vms); do
+    log -i "Starting backup of $vm"
     if [[ $vm == ***REMOVED*** ]]; then
       log -i "Skipping backup of ***REMOVED*** as it is handled in backup-physical-servers.sh"
       continue
@@ -40,11 +40,10 @@ main(){
         ((errs++))
       fi
     done
-    log -i "Starting backup of custom dirs for $vm_fqdn. Current errors: $errs"
+    log -i "Starting backup of custom dirs for $vm_fqdn"
     if ! backup_custom_dirs "$vm_fqdn" "$BACKUP_DST_DIR/$vm"; then
       ((errs++))
     fi
-    log -i "Ended backup of custom dirs for $vm_fqdn. Current errors: $errs"
     if [[ $errs -eq 0 ]]; then
       log -i "Backup of $vm_fqdn successful!"
       backup_success "$vm_fqdn" "$start"

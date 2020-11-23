@@ -12,9 +12,6 @@ set_env(){
   export RSH_CMD="ssh -i $SSH_KEY -l $SSH_USER"
   export BACKUP_DST_DIR="/srv/backup/remote-backup"
   export ZABBIX_CONFIG="/etc/zabbix/zabbix_agentd.conf"
-  if [[ -n ${DEBUG-} && $DEBUG == true ]]; then
-    set -o xtrace
-  fi
 }
 
 # log with a configurable prefix
@@ -64,13 +61,11 @@ backup_success(){
     zabbix_hostname=$hostname
   fi
   # send timestamp of last successful backup
-  set -x
   zabbix_sender --config "$ZABBIX_CONFIG" --host "$zabbix_hostname" \
     --key "rabe.rabe-backup.run.success[]" --value "$ts" || ret=$?
   # send duration of last successful backup
   zabbix_sender --config "$ZABBIX_CONFIG" --host "$zabbix_hostname" \
     --key "rabe.rabe-backup.run.duration[]" --value "$duration" || ret=$?
-  set +x
   if [[ $ret -ne 0 ]]; then
     log -e "Could not send status for $zabbix_hostname to Zabbix"
   fi
@@ -112,7 +107,7 @@ do_rsync(){
   # shellcheck disable=SC2086
   rsync --rsync-path="$RSYNC_PATH" --rsh="$RSH_CMD" --verbose --archive --recursive --acls \
     --devices --specials --delete --numeric-ids --timeout=120 --stats --human-readable --progress \
-    --inplace --one-file-system --relative $custom_rsync_opts "$src" "$dst"
+    --inplace --one-file-system --relative $custom_rsync_opts "$src" "$dst" 2>/dev/null
   handle_rsync_ret $? "$src" "$dst"
   return $?
 }
@@ -138,5 +133,7 @@ backup_custom_dirs() {
   return "$errs"
 }
 
+set -u
+set -o xtrace
 set_env
 # vim: tabstop=2 shiftwidth=2 expandtab

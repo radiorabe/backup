@@ -1,7 +1,6 @@
 #!/bin/bash
 # backup files from appliances
 # TODO: DRY
-set -u
 . "$(dirname "$0")/backup-util.sh"
 
 GWS=("***REMOVED***" "***REMOVED***")
@@ -20,10 +19,8 @@ main(){
     local errs=0
     ssh-keyscan "$gw" >> ~/.ssh/known_hosts 2> /dev/null
     for dir in "${GW_DIRS[@]}"; do
-      set -x
       scp -rp -i "$SSH_KEY" "$SSH_USER@$gw:$dir" "$BACKUP_DST_DIR/$gw"
       ret=$?
-      set +x
       if [[ $ret -eq 0 ]]; then
         log -s "Backup of $gw:$dir to $BACKUP_DST_DIR/$gw successful!"
       else
@@ -41,10 +38,8 @@ main(){
 
   # backup stream
   ssh-keyscan "$STREAM" >> ~/.ssh/known_hosts 2> /dev/null
-  set -x
   scp -rp -i "$SSH_KEY" "$SSH_USER@$STREAM:$STREAM_DIR" "$BACKUP_DST_DIR/$STREAM"
   ret=$?
-  set +x
   if [[ $ret -eq 0 ]]; then
     log -s "Backup of $STREAM:$STREAM_DIR to $BACKUP_DST_DIR/$STREAM successful!"
     backup_success "$STREAM" "$start"
