@@ -22,8 +22,8 @@ main(){
     for dir in "${GW_DIRS[@]}"; do
       set -x
       scp -rp -i "$SSH_KEY" "$SSH_USER@$gw:$dir" "$BACKUP_DST_DIR/$gw"
-      set +x
       ret=$?
+      set +x
       if [[ $ret -eq 0 ]]; then
         log -s "Backup of $gw:$dir to $BACKUP_DST_DIR/$gw successful!"
       else
