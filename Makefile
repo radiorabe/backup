@@ -41,6 +41,7 @@ ShellCheck:
 	shellcheck --exclude=SC1090 run-all.sh
 	shellcheck --exclude=SC1090 backup-appliances.sh
 	shellcheck --exclude=SC1090 backup-fs-vms.sh
+	shellcheck --exclude=SC1090 backup-physical-servers.sh
 	@echo done
 
 uninstall:

@@ -36,7 +36,7 @@ log(){
 
 # get content of a remote file
 # usage: cat_remote_file vm-xyz.domain.net /etc/hosts
-cat_remote_file() {
+cat_remote_file(){
   local hostname=$1
   local file=$2
   $RSH_CMD "$hostname" "cat $file"
@@ -114,7 +114,7 @@ do_rsync(){
 
 # backup directories specified by the remote system
 # usage: backup_custom_dirs vm-xyz.domain.net
-backup_custom_dirs() {
+backup_custom_dirs(){
   local hostname=$1
   local dst=$2
   local errs=0
