@@ -21,11 +21,15 @@ get_vms(){
       sed -n 's/<name>\(vm-.\{4\}\)<\/name>/\1/p' | tr -d '\n'
 }
 
+get_migrated_vms(){
+  cat /home/backup/migrated_vms
+}
+
 main(){
   local errs_all=0
   log -i "Rsync backup of VMs starting"
   mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bkp
-  for vm in $(get_vms); do
+  for vm in $(get_migrated_vms) $(get_vms); do
     log -i "Starting backup of $vm"
     if [[ $vm == ***REMOVED*** ]]; then
       log -i "Skipping backup of ***REMOVED*** as it is handled in backup-physical-servers.sh"
