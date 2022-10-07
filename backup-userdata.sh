@@ -27,7 +27,7 @@ main(){
     ((errs++))
   fi
   until [[ -z ${BACKUP_SRC_DIRS[i]} ]]; do
-    if ! do_rsync "$BACKUP_SRC_HOST:${BACKUP_SRC_DIRS[i]}" "${BACKUP_DST_DIRS[i]}"; then
+    if ! do_rsync "$BACKUP_SRC_HOST:${BACKUP_SRC_DIRS[i]}" "${BACKUP_DST_DIRS[i]}" "--no-relative"; then
       ((errs++))
     fi
     ((i++))
