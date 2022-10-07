@@ -46,10 +46,6 @@ cat_remote_file(){
 # usage: backup_success hostname unix_ts_start
 backup_success(){
   local hostname; hostname="$1"
-  if [[ $hostname == ***REMOVED**** ]]; then
-    log -i "Not sending Zabbix status for ***REMOVED***"
-    return
-  fi
   local start; start="$2"
   local ts; ts=$(date +%s)
   local duration=$((ts - start))
@@ -100,9 +96,6 @@ do_rsync(){
   local src; src=$1
   local dst; dst=$2
   local custom_rsync_opts; custom_rsync_opts=${3-""}
-  if [[ $src != ***REMOVED**** ]]; then
-    custom_rsync_opts="--xattrs $custom_rsync_opts"
-  fi
   log -i "Starting rsync from $src to $dst"
   # shellcheck disable=SC2086
   rsync --rsync-path="$RSYNC_PATH" --rsh="$RSH_CMD" --verbose --archive --recursive --acls \

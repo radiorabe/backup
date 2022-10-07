@@ -28,7 +28,9 @@ main(){
        log -e "Destination $backup_dst_dir is not a directory"
        ((errs++))
     fi
-    if ! do_rsync "$BACKUP_SRC_HOST:$backup_src_dir" "$backup_dst_dir" "--no-relative"; then
+    # --no-relative otherwise the full path is created on the destination
+    # --no-xattrs because ***REMOVED*** does not support extended attributes
+    if ! do_rsync "$BACKUP_SRC_HOST:$backup_src_dir" "$backup_dst_dir" "--no-relative --no-xattrs"; then
       ((errs++))
     fi
     ((i++))

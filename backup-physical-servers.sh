@@ -4,7 +4,7 @@
 
 SERVERS=(
   "***REMOVED***" "***REMOVED***" "***REMOVED***"
-  "***REMOVED***" "***REMOVED***.dmz.int.rabe.ch"
+  "***REMOVED***"
 )
 BACKUP_DIRS=(
   "/etc" "/home" "/root" "/usr/local" "/var/log" "/var/local" "/var/spool" "/var/backup"

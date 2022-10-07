@@ -31,16 +31,21 @@ main(){
   mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bkp
   for vm in $(get_migrated_vms) $(get_vms); do
     log -i "Starting backup of $vm"
-    if [[ $vm == ***REMOVED*** ]]; then
-      log -i "Skipping backup of ***REMOVED*** as it is handled in backup-physical-servers.sh"
-      continue
-    fi
     local vm_fqdn="$vm.***REMOVED***"
+    if [[ $vm == ***REMOVED*** ]]; then
+      # ***REMOVED*** only has a dmz address
+      vm_fqdn="${vm}.dmz.int.rabe.ch"
+    fi
+    local custom_rsync_opts=""
+    if [[ $vm == ***REMOVED*** ]]; then
+      # ***REMOVED*** does not support extended attributes
+      custom_rsync_opts="$custom_rsync_opts --no-xattrs"
+    fi
     local start; start=$(date +%s)
     local errs=0
     ssh-keyscan "$vm_fqdn" >> ~/.ssh/known_hosts 2>/dev/null
     for dir in "${BACKUP_DIRS[@]}"; do
-      if ! do_rsync "$vm_fqdn:$dir" "$BACKUP_DST_DIR/$vm"; then
+      if ! do_rsync "$vm_fqdn:$dir" "$BACKUP_DST_DIR/$vm" "$custom_rsync_opts"; then
         ((errs++))
       fi
     done
@@ -50,7 +55,11 @@ main(){
     fi
     if [[ $errs -eq 0 ]]; then
       log -i "Backup of $vm_fqdn successful!"
-      backup_success "$vm_fqdn" "$start"
+      if [[ $vm == ***REMOVED*** ]]; then
+        log -i "Not sending Zabbix status for $vm"
+      else
+        backup_success "$vm_fqdn" "$start"
+      fi
     else
       log -e "$vm had problems during the backup job"
       ((errs_all++))
