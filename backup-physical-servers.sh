@@ -4,6 +4,8 @@
 
 SERVERS=(
   "***REMOVED***" "***REMOVED***" "***REMOVED***"
+  "***REMOVED***" "***REMOVED***" "***REMOVED***"
+  "***REMOVED***"
   "***REMOVED***"
 )
 BACKUP_DIRS=(
