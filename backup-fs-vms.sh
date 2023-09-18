@@ -7,29 +7,46 @@ BACKUP_DIRS=(
   "/var/backups"
 )
 
+# get access token from oauth token endpoint required for API usage
+get_access_token(){
+  url="$1"
+  user="$2"
+  pass="$3"
+  curl --silent --insecure --header "Accept: application/json" \
+    --data-urlencode "grant_type=password" \
+    --data-urlencode "scope=ovirt-app-api" \
+    --data-urlencode "username=$user" \
+    --data-urlencode "password=$pass" \
+    "$url/sso/oauth/token" | \
+    jq -r ".access_token"
+}
+
 # fetch list of vms from ovirt
 # usage: vms=$(get_vms)
 get_vms(){
-  local ovirt_url="https://***REMOVED***/ovirt-engine/api"
-  local ovirt_user="***REMOVED***"
-  local ovirt_password; ovirt_password=$(cat /home/backup/.ovirt_password)
-
-  # filter result by only running VMs
-  # http://ovirt.github.io/ovirt-engine-api-model/master/#services/vms/methods/list
-  curl --silent --insecure --header "Accept: application/xml" --user "$ovirt_user:$ovirt_password" \
-      "$ovirt_url/vms?search=status%3Dup" | \
-      sed -n 's/<name>\(vm-.\{4\}\)<\/name>/\1/p' | tr -d '\n'
-}
-
-get_migrated_vms(){
-  cat /home/backup/migrated_vms
+  set +x # password should not end up in the logs
+  # this file should contain 3 arrays: OVIRT_URLS, OVIRT_USERS, OVIRT_PASSWORDS
+  . "$CONF_DIR/ovirt_credentials.sh"
+  for i in "${!OVIRT_URLS[@]}"; do
+    url=${OVIRT_URLS[$i]}
+    user=${OVIRT_USERS[$i]}
+    pass=${OVIRT_PASSWORDS[$i]}
+    access_token="$(get_access_token "$url" "$user" "$pass")"
+    # filter result by only running VMs
+    # http://ovirt.github.io/ovirt-engine-api-model/master/#services/vms/methods/list
+    curl --silent --insecure --header "Accept: application/json" \
+      --header "Authorization: Bearer $access_token" \
+      "$url/api/vms?status=up" | \
+      jq -r '.vm[].name' | grep -E '^vm-[0-9]{4}'
+  done
+  set -x
 }
 
 main(){
   local errs_all=0
   log -i "Rsync backup of VMs starting"
   mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bkp
-  for vm in $(get_migrated_vms) $(get_vms); do
+  for vm in $(get_vms); do
     log -i "Starting backup of $vm"
     local vm_fqdn="$vm.***REMOVED***"
     if [[ $vm == ***REMOVED*** ]]; then

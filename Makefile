@@ -69,6 +69,10 @@ install-bin:
 	install -Dm755 backup-userdata.sh "$(BINDIR)/backup-userdata.sh"
 	install -Dm755 backup-util.sh "$(BINDIR)/backup-util.sh"
 	install -Dm755 run-all.sh "$(BINDIR)/run-all.sh"
+	[ -f $(ETCDIR)/rabe-backup/appliances.sh ] || install -Dm700 config/appliances.sh "$(ETCDIR)/rabe-backup/appliances.sh"
+	[ -f $(ETCDIR)/rabe-backup/ovirt_credentials.sh ] || install -Dm700 config/ovirt_credentials.sh "$(ETCDIR)/rabe-backup/ovirt_credentials.sh"
+	[ -f $(ETCDIR)/rabe-backup/physical_servers.sh ] || install -Dm700 config/physical_servers.sh "$(ETCDIR)/rabe-backup/physical_servers.sh"
+	[ -f $(ETCDIR)/rabe-backup/userdata.sh ] || install -Dm700 config/userdata.sh "$(ETCDIR)/rabe-backup/userdata.sh"
 	@echo 'installing btrbk.conf...'
 	install -Dm644 config/btrbk.conf "$(ETCDIR)/btrbk/btrbk.conf"
 	@echo 'installing systemd services...'

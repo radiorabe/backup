@@ -2,11 +2,7 @@
 # backup files from appliances
 # TODO: DRY
 . "$(dirname "$0")/backup-util.sh"
-
-GWS=("***REMOVED***" "***REMOVED***")
-GW_DIRS=("/home/backup/" "***REMOVED***/")
-STREAM="***REMOVED***"
-STREAM_DIR="***REMOVED****"
+. "$CONF_DIR/appliances.sh"
 
 main(){
   log -i "Appliance backup starting"

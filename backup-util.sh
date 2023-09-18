@@ -4,6 +4,7 @@
 
 # set environment variables
 set_env(){
+  export CONF_DIR="/etc/rabe-backup"
   export REMOTE_INCLUDE="/etc/rabe-backup.include"
   export REMOTE_EXCLUDE="/etc/rabe-backup.exclude"
   export RSYNC_PATH="sudo /bin/rsync"

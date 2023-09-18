@@ -1,13 +1,8 @@
 #!/bin/bash
 # backup files from physical servers
 . "$(dirname "$0")/backup-util.sh"
+. "$CONF_DIR/physical_servers.sh"
 
-SERVERS=(
-  "***REMOVED***" "***REMOVED***" "***REMOVED***"
-  "***REMOVED***" "***REMOVED***" "***REMOVED***"
-  "***REMOVED***"
-  "***REMOVED***"
-)
 BACKUP_DIRS=(
   "/etc" "/home" "/root" "/usr/local" "/var/log" "/var/local" "/var/spool" "/var/backup"
   "/var/backups"

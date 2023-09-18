@@ -1,20 +1,7 @@
 #!/bin/bash
 # backup user shares
 . "$(dirname "$0")/backup-util.sh"
-
-BACKUP_SRC_HOST="***REMOVED***.***REMOVED***"
-BACKUP_SRC_DIRS=(
-    "***REMOVED***/"
-    "***REMOVED***/"
-    "***REMOVED***/"
-    "***REMOVED***/"
-)
-BACKUP_DST_DIRS=(
-    "***REMOVED***"
-    "***REMOVED***"
-    "***REMOVED***"
-    "***REMOVED***"
-)
+. "$CONF_DIR/userdata.sh"
 
 main(){
   log -i "Rsync backup of userdata starting"
