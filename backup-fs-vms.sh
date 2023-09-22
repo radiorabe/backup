@@ -50,13 +50,14 @@ main(){
   for vm in $(get_vms); do
     log -i "Starting backup of $vm"
     local vm_fqdn="$vm.***REMOVED***"
-    if [[ $vm == ***REMOVED*** ]]; then
-      # ***REMOVED*** only has a dmz address
-      vm_fqdn="${vm}.dmz.int.rabe.ch"
-    fi
+    for i in "${!SPECIAL_FQDNS[@]}"; do
+      if [[ $vm =~ ${SPECIAL_FQDNS[$i]} ]]; then
+        vm_fqdn="${SPECIAL_FQDNS[$i]}"
+        break
+      fi
+    done
     local custom_rsync_opts=""
-    if [[ $vm == ***REMOVED*** ]]; then
-      # ***REMOVED*** does not support extended attributes
+    if [[ $vm =~ ${NO_XATTRS[@]} ]]; then
       custom_rsync_opts="$custom_rsync_opts --no-xattrs"
     fi
     local start; start=$(date +%s)
@@ -68,7 +69,7 @@ main(){
       fi
     done
     log -i "Starting backup of custom dirs for $vm_fqdn"
-    if ! backup_custom_dirs "$vm_fqdn" "$BACKUP_DST_DIR/$vm"; then
+    if ! backup_custom_dirs "$vm_fqdn" "$BACKUP_DST_DIR/$vm" "$custom_rsync_opts"; then
       ((errs++))
     fi
     if [[ $errs -eq 0 ]]; then
