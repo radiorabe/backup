@@ -111,6 +111,7 @@ do_rsync(){
 backup_custom_dirs(){
   local hostname=$1
   local dst=$2
+  local custom_rsync_opts; custom_rsync_opts=${3-""}
   local errs=0
   # fetch include and exclude files
   local includes; includes=$(cat_remote_file "$hostname" "$REMOTE_INCLUDE")
@@ -119,8 +120,9 @@ backup_custom_dirs(){
   for exclude in $excludes; do
     exclude_opts="$exclude_opts --exclude $exclude"
   done
+  custom_rsync_opts="$custom_rsync_opts $exclude_opts"
   for include in $includes; do
-    if ! do_rsync "$hostname:$include" "$dst" "$exclude_opts"; then
+    if ! do_rsync "$hostname:$include" "$dst" "$custom_rsync_opts"; then
       ((errs++))
     fi
   done
