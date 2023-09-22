@@ -11,6 +11,8 @@ OVIRT_PASSWORDS=(
   "backupForuser@ovirt@internalsso"
 )
 
+VM_SUFFIX="local"
+
 SPECIAL_FQDNS=(
   "vmx.sub.local"
 )

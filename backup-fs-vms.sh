@@ -49,7 +49,7 @@ main(){
   mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bkp
   for vm in $(get_vms); do
     log -i "Starting backup of $vm"
-    local vm_fqdn="$vm.***REMOVED***"
+    local vm_fqdn="$vm.$VM_SUFFIX"
     for i in "${!SPECIAL_FQDNS[@]}"; do
       if [[ $vm =~ ${SPECIAL_FQDNS[$i]} ]]; then
         vm_fqdn="${SPECIAL_FQDNS[$i]}"
