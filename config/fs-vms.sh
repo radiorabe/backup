@@ -18,4 +18,8 @@ SPECIAL_FQDNS=(
 NO_XATTRS=(
   "vmy"
 )
+
+NO_ZABBIX=(
+  "vmz"
+)
 # vim: tabstop=2 shiftwidth=2 expandtab
