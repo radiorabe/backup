@@ -74,7 +74,7 @@ main(){
     fi
     if [[ $errs -eq 0 ]]; then
       log -i "Backup of $vm_fqdn successful!"
-      if [[ $vm =~ ${SPECIAL_FQDNS[$i]} ]]; then
+      if [[ $vm =~ ${NO_ZABBIX[$i]} ]]; then
         log -i "Not sending Zabbix status for $vm"
       else
         backup_success "$vm_fqdn" "$start"
