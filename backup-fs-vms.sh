@@ -1,6 +1,9 @@
 #!/bin/bash
 # backup files from VMs
 . "$(dirname "$0")/backup-util.sh"
+set +o xtrace # do not log sensitive data
+. "$CONF_DIR/fs-vms.sh"
+set -o xtrace
 
 BACKUP_DIRS=(
   "/etc" "/home" "/root" "/usr/local" "/var/log" "/var/local" "/var/spool" "/var/backup"
@@ -24,9 +27,7 @@ get_access_token(){
 # fetch list of vms from ovirt
 # usage: vms=$(get_vms)
 get_vms(){
-  set +x # password should not end up in the logs
-  # this file should contain 3 arrays: OVIRT_URLS, OVIRT_USERS, OVIRT_PASSWORDS
-  . "$CONF_DIR/ovirt_credentials.sh"
+  set +o xtrace # do not log sensitive data
   for i in "${!OVIRT_URLS[@]}"; do
     url=${OVIRT_URLS[$i]}
     user=${OVIRT_USERS[$i]}
@@ -39,7 +40,7 @@ get_vms(){
       "$url/api/vms?status=up" | \
       jq -r '.vm[].name' | grep -E '^vm-[0-9]{4}'
   done
-  set -x
+  set -o xtrace
 }
 
 main(){

@@ -10,4 +10,12 @@ OVIRT_USERS=(
 OVIRT_PASSWORDS=(
   "backupForuser@ovirt@internalsso"
 )
+
+SPECIAL_FQDNS=(
+  "vmx.sub.local"
+)
+
+NO_XATTRS=(
+  "vmy"
+)
 # vim: tabstop=2 shiftwidth=2 expandtab
