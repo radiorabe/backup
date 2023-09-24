@@ -50,14 +50,16 @@ main(){
   for vm in $(get_vms); do
     log -i "Starting backup of $vm"
     local vm_fqdn="$vm.$VM_SUFFIX"
-    for i in "${!SPECIAL_FQDNS[@]}"; do
-      if [[ $vm =~ ${SPECIAL_FQDNS[$i]} ]]; then
-        vm_fqdn="${SPECIAL_FQDNS[$i]}"
-        break
-      fi
-    done
+    if [[ ${SPECIAL_FQDNS[@]} =~ $vm ]]; then
+      for fqdn in ${SPECIAL_FQDNS[@]}; do
+        if [[ $fqdn =~ $vm ]]; then
+          vm_fqdn=$fqdn
+          break
+        fi
+      done
+    fi
     local custom_rsync_opts=""
-    if [[ $vm =~ ${NO_XATTRS[@]} ]]; then
+    if [[ ${NO_XATTRS[@]} =~ $vm ]]; then
       custom_rsync_opts="$custom_rsync_opts --no-xattrs"
     fi
     local start; start=$(date +%s)
@@ -74,7 +76,7 @@ main(){
     fi
     if [[ $errs -eq 0 ]]; then
       log -i "Backup of $vm_fqdn successful!"
-      if [[ $vm =~ ${NO_ZABBIX[@]} ]]; then
+      if [[ ${NO_ZABBIX[@]} =~ $vm ]]; then
         log -i "Not sending Zabbix status for $vm"
       else
         backup_success "$vm_fqdn" "$start"
