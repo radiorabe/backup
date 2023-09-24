@@ -51,7 +51,7 @@ main(){
     log -i "Starting backup of $vm"
     local vm_fqdn="$vm.$VM_SUFFIX"
     if [[ ${SPECIAL_FQDNS[@]} =~ $vm ]]; then
-      for fqdn in ${SPECIAL_FQDNS[@]}; do
+      for fqdn in "${SPECIAL_FQDNS[@]}"; do
         if [[ $fqdn =~ $vm ]]; then
           vm_fqdn=$fqdn
           break
