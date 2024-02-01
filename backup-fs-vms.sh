@@ -59,9 +59,6 @@ main(){
       done
     fi
     local custom_rsync_opts=""
-    if [[ ${NO_XATTRS[@]} =~ $vm ]]; then
-      custom_rsync_opts="$custom_rsync_opts --no-xattrs"
-    fi
     local start; start=$(date +%s)
     local errs=0
     ssh-keyscan "$vm_fqdn" >> ~/.ssh/known_hosts 2>/dev/null
@@ -76,11 +73,7 @@ main(){
     fi
     if [[ $errs -eq 0 ]]; then
       log -i "Backup of $vm_fqdn successful!"
-      if [[ ${NO_ZABBIX[@]} =~ $vm ]]; then
-        log -i "Not sending Zabbix status for $vm"
-      else
-        backup_success "$vm_fqdn" "$start"
-      fi
+      backup_success "$vm_fqdn" "$start"
     else
       log -e "$vm had problems during the backup job"
       ((errs_all++))
