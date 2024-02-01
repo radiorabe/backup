@@ -27,7 +27,6 @@ all:
 test:
 	@echo Testing script syntax...
 	bash -n backup-physical-servers.sh
-	bash -n backup-userdata.sh
 	bash -n backup-appliances.sh
 	bash -n backup-fs-vms.sh
 	bash -n backup-util.sh
@@ -42,7 +41,6 @@ ShellCheck:
 	shellcheck --exclude=SC1090 backup-appliances.sh
 	shellcheck --exclude=SC1090 backup-fs-vms.sh
 	shellcheck --exclude=SC1090 backup-physical-servers.sh
-	shellcheck --exclude=SC1090 backup-userdata.sh
 	@echo done
 
 uninstall:
@@ -54,7 +52,6 @@ uninstall:
 	rm $(BINDIR)/backup-appliances.sh
 	rm $(BINDIR)/backup-fs-vms.sh
 	rm $(BINDIR)/backup-physical-servers.sh
-	rm $(BINDIR)/backup-userdata.sh
 	rm $(BINDIR)/logging.lib
 	rmdir $(BINDIR)
 	systemctl daemon-reload
@@ -66,13 +63,11 @@ install-bin:
 	install -Dm755 backup-appliances.sh "$(BINDIR)/backup-appliances.sh"
 	install -Dm755 backup-fs-vms.sh "$(BINDIR)/backup-fs-vms.sh"
 	install -Dm755 backup-physical-servers.sh "$(BINDIR)/backup-physical-servers.sh"
-	install -Dm755 backup-userdata.sh "$(BINDIR)/backup-userdata.sh"
 	install -Dm755 backup-util.sh "$(BINDIR)/backup-util.sh"
 	install -Dm755 run-all.sh "$(BINDIR)/run-all.sh"
 	[ -f $(ETCDIR)/rabe-backup/appliances.sh ] || install -Dm700 config/appliances.sh "$(ETCDIR)/rabe-backup/appliances.sh"
 	[ -f $(ETCDIR)/rabe-backup/fs-vms.sh ] || install -Dm700 config/fs-vms.sh "$(ETCDIR)/rabe-backup/fs-vms.sh"
 	[ -f $(ETCDIR)/rabe-backup/physical_servers.sh ] || install -Dm700 config/physical_servers.sh "$(ETCDIR)/rabe-backup/physical_servers.sh"
-	[ -f $(ETCDIR)/rabe-backup/userdata.sh ] || install -Dm700 config/userdata.sh "$(ETCDIR)/rabe-backup/userdata.sh"
 	@echo 'installing btrbk.conf...'
 	install -Dm644 config/btrbk.conf "$(ETCDIR)/btrbk/btrbk.conf"
 	@echo 'installing systemd services...'

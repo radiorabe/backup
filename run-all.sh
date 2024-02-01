@@ -6,7 +6,6 @@ STEPS=(
   "backup-appliances.sh"
   "backup-fs-vms.sh"
   "backup-physical-servers.sh"
-  "backup-userdata.sh"
   "btrbk run"
 )
 
