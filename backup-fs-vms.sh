@@ -34,11 +34,11 @@ get_vms(){
     pass=${OVIRT_PASSWORDS[$i]}
     access_token="$(get_access_token "$url" "$user" "$pass")"
     # filter result by only running VMs
-    # http://ovirt.github.io/ovirt-engine-api-model/master/#services/vms/methods/list
+    # https://ovirt.github.io/ovirt-engine-api-model/master/#services/vms/methods/list
     curl --silent --insecure --header "Accept: application/json" \
       --header "Authorization: Bearer $access_token" \
-      "$url/api/vms?status=up" | \
-      jq -r '.vm[].name' | grep -E '^vm-[0-9]{4}'
+      "$url/api/vms?search=status=up" | \
+      jq --raw-output '.vm[].name | select(. | test("vm-[0-9]{4}"))'
   done
   set -o xtrace
 }
