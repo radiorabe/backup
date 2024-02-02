@@ -38,7 +38,7 @@ get_vms(){
     curl --silent --insecure --header "Accept: application/json" \
       --header "Authorization: Bearer $access_token" \
       "$url/api/vms?search=status=up" | \
-      jq --raw-output '.vm[].name | select(. | test("vm-[0-9]{4}"))'
+      jq --raw-output '.vm[].name | select(. | test("^vm-[0-9]{4}"))'
   done
   set -o xtrace
 }
