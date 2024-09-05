@@ -107,7 +107,7 @@ do_rsync(){
 }
 
 # backup directories specified by the remote system
-# usage: backup_custom_dirs vm-xyz.domain.net
+# usage: backup_custom_dirs vm-xyz.domain.net /dst/vm custom_rsync_opts(optional)
 backup_custom_dirs(){
   local hostname=$1
   local dst=$2

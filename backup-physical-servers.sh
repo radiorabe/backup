@@ -22,8 +22,8 @@ main(){
         ((errs++))
       fi
     done
-    log -i "Starting backup of custom dirs for $vm_fqdn"
-    if ! backup_custom_dirs "$vm_fqdn" "$BACKUP_DST_DIR/$vm" "$custom_rsync_opts"; then
+    log -i "Starting backup of custom dirs for $server"
+    if ! backup_custom_dirs "$server" "$BACKUP_DST_DIR/$server"; then
       ((errs++))
     fi
     if [[ $errs -eq 0 ]]; then
