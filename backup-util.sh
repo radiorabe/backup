@@ -52,16 +52,23 @@ backup_success(){
   local duration=$((ts - start))
   local ret=0
   local zabbix_hostname;
+  local zabbix_server2;
+  local zabbix_server_arg; zabbix_server_arg=""
   zabbix_hostname="$(cat_remote_file "$hostname" "/etc/zabbix/zabbix_agentd.conf" | \
     grep "^Hostname=.*$" | awk -F "=" '{print $2}')"
   if [[ -z $zabbix_hostname ]]; then
     zabbix_hostname=$hostname
   fi
+  zabbix_server2="$(cat_remote_file "$hostname" "/etc/zabbix/zabbix_agent2.conf" | \
+    grep "^Server=.*$" | awk -F "=" '{print $2}')"
+  if [[ -z $zabbix_server2 ]]; then
+    zabbix_server_arg="--zabbix-server ${zabbix_server2}"
+  fi
   # send timestamp of last successful backup
-  zabbix_sender --config "$ZABBIX_CONFIG" --host "$zabbix_hostname" \
+  zabbix_sender --config "$ZABBIX_CONFIG" $zabbix_server_arg --host "$zabbix_hostname" \
     --key "rabe.rabe-backup.run.success[]" --value "$ts" || ret=$?
   # send duration of last successful backup
-  zabbix_sender --config "$ZABBIX_CONFIG" --host "$zabbix_hostname" \
+  zabbix_sender --config "$ZABBIX_CONFIG" $zabbix_server_arg --host "$zabbix_hostname" \
     --key "rabe.rabe-backup.run.duration[]" --value "$duration" || ret=$?
   if [[ $ret -ne 0 ]]; then
     log -e "Could not send status for $zabbix_hostname to Zabbix"
