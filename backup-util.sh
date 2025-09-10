@@ -61,7 +61,7 @@ backup_success(){
   fi
   zabbix_server2="$(cat_remote_file "$hostname" "/etc/zabbix/zabbix_agent2.conf" | \
     grep "^Server=.*$" | awk -F "=" '{print $2}')"
-  if [[ -z $zabbix_server2 ]]; then
+  if [[ -n $zabbix_server2 ]]; then
     zabbix_server_arg="--zabbix-server ${zabbix_server2}"
   fi
   # send timestamp of last successful backup
