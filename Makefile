@@ -76,7 +76,6 @@ install-bin:
 	systemctl daemon-reload
 	systemctl start rabe-backup.timer
 	systemctl enable rabe-backup.timer
-	systemctl enable rabe-backup.service
 
 diff:
 	@echo Difference between git files and installed files
