@@ -15,7 +15,7 @@ get_access_token(){
   url="$1"
   user="$2"
   pass="$3"
-  curl --silent --insecure --header "Accept: application/json" \
+  curl --silent --header "Accept: application/json" \
     --data-urlencode "grant_type=password" \
     --data-urlencode "scope=ovirt-app-api" \
     --data-urlencode "username=$user" \
@@ -35,7 +35,7 @@ get_vms(){
     access_token="$(get_access_token "$url" "$user" "$pass")"
     # filter result by only running VMs
     # https://ovirt.github.io/ovirt-engine-api-model/master/#services/vms/methods/list
-    curl --silent --insecure --header "Accept: application/json" \
+    curl --silent --header "Accept: application/json" \
       --header "Authorization: Bearer $access_token" \
       "$url/api/vms?search=status=up" | \
       jq --raw-output '.vm[].name | select(. | test("^vm-[0-9]{4}"))'

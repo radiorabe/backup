@@ -37,6 +37,11 @@ Create a backup user within a ssh key:
 	mkdir .ssh
 	ssh-keygen -t rsa -b 4098 -C "backup@vm-1001" -f ~/.ssh/id_backup
 
+Install the CA certificate of the oVirt Engine:
+
+	cp /path/to/ovirt-engine.pem /etc/pki/ca-trust/source/anchors/ovirt-engine.pem
+	update-ca-trust
+
 ## Usage
 
 As root:
