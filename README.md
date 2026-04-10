@@ -34,7 +34,7 @@ As root on the backup server:
 Create an ssh key:
 
 	mkdir -p /usr/local/backup
-	ssh-keygen -t rsa -b 4096 -C "backup@vm-1004" -f /usr/local/backup/id_rsa
+	ssh-keygen -t rsa -b 4096 -C "backup@vm-1234" -f /usr/local/backup/id_rsa -N ""
 
 Install the CA certificate of the oVirt Engine:
 
