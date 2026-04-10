@@ -22,7 +22,7 @@ Radio RaBe Backup process and automation scripts.
 * **backup-userdata.sh**: Backup user data (shares)
 * **backup-appliances.sh**: Backup Secures gateway, firewall and access points.
 * **backup-physical-servers.sh**: Backup the virtualization hosts
-* **run-all.sh**: Wrapper script for systemd.timer which run all three backup scripts.
+* **backup-all.sh**: Wrapper script for systemd.timer which run all three backup scripts.
 
 ## Setup
 
@@ -50,7 +50,7 @@ As root:
 
 or
 
-	/user/local/scripts/backup/run-all.sh
+	/usr/local/bin/backup-all.sh
 
 ## RPM Packaging
 

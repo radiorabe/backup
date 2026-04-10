@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 . "$(dirname "$0")/backup-util.sh"
 
-PATH="/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/scripts/backup"
 STEPS=(
   "backup-appliances.sh"
   "backup-fs-vms.sh"

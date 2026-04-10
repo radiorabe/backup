@@ -16,9 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with radiorabe backup.  If not, see <http://www.gnu.org/licenses/>.
 
-PREFIX		?= /usr
+PREFIX		?= /usr/local
 ETCDIR		?= /etc
-BINDIR		= $(PREFIX)/local/scripts/backup
+BINDIR		= $(PREFIX)/bin
 LIBDIR		= $(PREFIX)/lib
 UNITDIR		= $(LIBDIR)/systemd/system
 
@@ -30,14 +30,14 @@ test:
 	bash -n backup-appliances.sh
 	bash -n backup-fs-vms.sh
 	bash -n backup-util.sh
-	bash -n run-all.sh
+	bash -n backup-all.sh
 	bash -n logging.lib
 	@echo done.
 
 ShellCheck:
 	@echo Running ShellCheck...
 	shellcheck backup-util.sh
-	shellcheck --exclude=SC1090 run-all.sh
+	shellcheck --exclude=SC1090 backup-all.sh
 	shellcheck --exclude=SC1090 backup-appliances.sh
 	shellcheck --exclude=SC1090 backup-fs-vms.sh
 	shellcheck --exclude=SC1090 backup-physical-servers.sh
@@ -48,7 +48,7 @@ uninstall:
 	rm $(ETCDIR)/btrbk/btrbk.conf
 	rm $(UNITDIR)/rabe-backup.service
 	rm $(UNITDIR)/rabe-backup.timer
-	rm $(BINDIR)/run-all.sh
+	rm $(BINDIR)/backup-all.sh
 	rm $(BINDIR)/backup-appliances.sh
 	rm $(BINDIR)/backup-fs-vms.sh
 	rm $(BINDIR)/backup-physical-servers.sh
@@ -64,7 +64,7 @@ install-bin:
 	install -Dm755 backup-fs-vms.sh "$(BINDIR)/backup-fs-vms.sh"
 	install -Dm755 backup-physical-servers.sh "$(BINDIR)/backup-physical-servers.sh"
 	install -Dm755 backup-util.sh "$(BINDIR)/backup-util.sh"
-	install -Dm755 run-all.sh "$(BINDIR)/run-all.sh"
+	install -Dm755 backup-all.sh "$(BINDIR)/backup-all.sh"
 	[ -f $(ETCDIR)/rabe-backup/appliances.sh ] || install -Dm700 config/appliances.sh "$(ETCDIR)/rabe-backup/appliances.sh"
 	[ -f $(ETCDIR)/rabe-backup/fs-vms.sh ] || install -Dm700 config/fs-vms.sh "$(ETCDIR)/rabe-backup/fs-vms.sh"
 	[ -f $(ETCDIR)/rabe-backup/physical_servers.sh ] || install -Dm700 config/physical_servers.sh "$(ETCDIR)/rabe-backup/physical_servers.sh"

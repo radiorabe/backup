@@ -3,4 +3,4 @@ Description=RaBe Backup Service
 
 [Service]
 Type=simple
-ExecStart=/usr/local/scripts/backup/run-all.sh
+ExecStart=backup-all.sh
