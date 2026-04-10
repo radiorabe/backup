@@ -130,6 +130,5 @@ backup_custom_dirs(){
 }
 
 set -u
-set -o xtrace
 set_env
 # vim: tabstop=2 shiftwidth=2 expandtab
