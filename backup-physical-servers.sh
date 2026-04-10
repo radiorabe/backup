@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # backup files from physical servers
 . "$(dirname "$0")/backup-util.sh"
 . "$CONF_DIR/physical_servers.sh"

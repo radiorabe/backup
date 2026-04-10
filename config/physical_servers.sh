@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 SERVERS=(
   "server-001.local" "server-002.local"
 )

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # backup files from appliances
 # TODO: DRY
 . "$(dirname "$0")/backup-util.sh"

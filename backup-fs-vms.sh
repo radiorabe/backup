@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # backup files from VMs
 . "$(dirname "$0")/backup-util.sh"
 set +o xtrace # do not log sensitive data

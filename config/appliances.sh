@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 GWS=("gw1.local" "gw2.local")
 GW_DIRS=("/dir/1" "/dir/2")
 STREAM="stream1.local"

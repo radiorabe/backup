@@ -1,4 +1,4 @@
-#!/usr/bin/make -f
+#!/usr/bin/env make -f
 #
 # This file is part of radiorabe backup
 # https://github.com/radiorabe/backup
