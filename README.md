@@ -31,11 +31,10 @@ As root on the backup server:
 	git clone https://github.com/radiorabe/backup
 	make install
 
-Create a backup user within a ssh key:
+Create an ssh key:
 
-	su - backup
-	mkdir .ssh
-	ssh-keygen -t rsa -b 4098 -C "backup@vm-1001" -f ~/.ssh/id_backup
+	mkdir -p /usr/local/backup
+	ssh-keygen -t rsa -b 4096 -C "backup@vm-1004" -f /usr/local/backup/id_rsa
 
 Install the CA certificate of the oVirt Engine:
 

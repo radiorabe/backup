@@ -8,7 +8,7 @@ set_env(){
   export REMOTE_INCLUDE="/etc/rabe-backup.include"
   export REMOTE_EXCLUDE="/etc/rabe-backup.exclude"
   export RSYNC_PATH="sudo /bin/rsync"
-  export SSH_KEY="/home/backup/.ssh/id_rsa"
+  export SSH_KEY="/var/lib/backup/id_rsa"
   export SSH_USER="backup"
   export RSH_CMD="ssh -i $SSH_KEY -l $SSH_USER"
   export BACKUP_DST_DIR="/srv/backup/remote-backup"
