@@ -13,7 +13,7 @@ main(){
   for gw in "${GWS[@]}"; do
     local start; start=$(date +%s)
     local errs=0
-    ssh-keyscan "$gw" >> ~/.ssh/known_hosts 2> /dev/null
+    ssh-keyscan -t rsa,ed25519 "$gw" >> ~/.ssh/known_hosts 2> /dev/null
     for dir in "${GW_DIRS[@]}"; do
       scp -rp -i "$SSH_KEY" "$SSH_USER@$gw:$dir" "$BACKUP_DST_DIR/$gw"
       ret=$?
