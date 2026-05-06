@@ -12,7 +12,11 @@ set_env(){
   export SSH_USER="backup"
   export RSH_CMD="ssh -i $SSH_KEY -l $SSH_USER"
   export BACKUP_DST_DIR="/srv/backup/remote-backup"
-  export ZABBIX_CONFIG="/etc/zabbix/zabbix_agentd.conf"
+  if [ -f "/etc/zabbix/agent2.conf" ]; then
+    export ZABBIX_CONFIG="/etc/zabbix/zabbix_agent2.conf"
+  else
+    export ZABBIX_CONFIG="/etc/zabbix/zabbix_agentd.conf"
+  fi
 }
 
 # log with a configurable prefix
