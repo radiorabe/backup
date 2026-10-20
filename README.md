@@ -50,12 +50,6 @@ or
 
 	/usr/local/bin/backup-all.sh
 
-## RPM Packaging
-
-Since it is not finished yet, I parked the packaging files (see
-[README.md](https://github.com/radiorabe/backup/blob/legacy/README.md)) in the
-branch [legacy](https://github.com/radiorabe/backup/tree/legacy).
-
 ## License
 
 The Radio RaBe backup process and automation scripts are released under the terms
